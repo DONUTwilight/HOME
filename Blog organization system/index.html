@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog organization system</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 左侧：录入板块 -->
+        <div class="section">
+            <div class="section-title">
+                <i class="fas fa-keyboard"></i> 博客录入
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label">博客内容</label>
+                <textarea id="contentInput" placeholder="输入博客内容..."></textarea>
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label">图片/视频 (可选，最大5MB)</label>
+                <div class="media-upload" id="mediaUpload">
+                    <i class="fas fa-cloud-upload-alt"></i> 点击上传图片或视频
+                    <input type="file" id="mediaInput" accept="image/*,video/*" style="display: none;">
+                </div>
+                <div id="mediaPreview"></div>
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label">发布时间 (可选)</label>
+                <div class="datetime-group">
+                    <input type="datetime-local" id="datetimeInput">
+                    <button type="button" class="now-button" id="nowButton">
+                        <i class="fas fa-clock"></i> 现在
+                    </button>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label class="input-label">标签</label>
+                <div class="tag-container" id="tagContainer"></div>
+                <input type="text" id="newTagInput" placeholder="输入新标签，按回车添加">
+            </div>
+            
+            <div class="button-group">
+                <button class="button button-primary" id="saveButton">
+                    <i class="fas fa-save"></i> 保存博客
+                </button>
+                <button class="button" id="clearButton">
+                    <i class="fas fa-eraser"></i> 清空
+                </button>
+            </div>
+        </div>
+        
+        <!-- 右侧：输出板块 -->
+        <div class="section">
+            <div class="section-title">
+                <i class="fas fa-list"></i> 博客列表
+            </div>
+            
+            <div class="blog-list" id="blogList">
+                <div class="blog-item" style="text-align: center; color: #999;">
+                    加载中...
+                </div>
+            </div>
+            
+            <div class="section-title">
+                <i class="fas fa-exchange-alt"></i> 数据管理
+            </div>
+            
+            <div class="button-group">
+                <button class="button" id="importButton">
+                    <i class="fas fa-file-import"></i> 导入
+                </button>
+                <button class="button" id="exportButton">
+                    <i class="fas fa-file-export"></i> 导出
+                </button>
+            </div>
+            
+            <div class="export-options" id="exportOptions" style="display: none;">
+                <button class="button" id="exportTxt">
+                    <i class="fas fa-file-alt"></i> 导出为 TXT
+                </button>
+                <button class="button" id="exportData">
+                    <i class="fas fa-database"></i> 导出为数据文件
+                </button>
+                <button class="button" id="exportHtml">
+                    <i class="fas fa-code"></i> 导出为 HTML 博客
+                </button>
+            </div>
+            
+            <div class="statistics">
+                <span>总计: <span id="totalBlogs">0</span> 条博客</span>
+                <span>标签: <span id="totalTags">0</span> 个</span>
+            </div>
+        </div>
+    </div>
+    
+    <input type="file" id="importFileInput" accept=".json,.html" style="display: none;">
+    
+    <script src="scripts/organizer.js"></script>
+</body>
+</html>

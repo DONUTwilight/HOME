@@ -5,22 +5,34 @@ class BlogOrganizer {
         this.currentMedia = null;
         this.mediaType = null;
         this.editingId = null;
+        this.currentFilters = {
+            keyword: '',
+            timeFilter: 'all',
+            timeValues: {},
+            tagFilterMode: 'all',
+            selectedTags: []
+        };
+        this.filteredBlogs = [...this.blogs];
         this.init();
     }
     
     init() {
         this.setupEventListeners();
         this.renderTags();
+        this.renderFilterTags();
+        this.setupTimeFilterControls();
         this.renderBlogList();
         this.updateStats();
         this.setCurrentTime();
+        this.updateFilterStats();
     }
     
     setupEventListeners() {
+        // 保存和清空
         document.getElementById('saveButton').addEventListener('click', () => this.saveBlog());
         document.getElementById('clearButton').addEventListener('click', () => this.clearForm());
         
-        // 修正时间设置
+        // 时间设置
         document.getElementById('nowButton').addEventListener('click', () => this.setCurrentTime());
         
         // 多媒体上传
@@ -32,9 +44,41 @@ class BlogOrganizer {
         // 标签管理
         document.getElementById('newTagInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
-                this.addTag(e.target.value.trim());
-                e.target.value = '';
+                const tag = e.target.value.trim();
+                if (tag) {
+                    this.addTag(tag);
+                    e.target.value = '';
+                }
             }
+        });
+        
+        // 筛选功能
+        document.getElementById('keywordSearch').addEventListener('input', (e) => {
+            this.currentFilters.keyword = e.target.value;
+            this.applyFilters();
+        });
+        
+        document.getElementById('timeFilterType').addEventListener('change', () => {
+            this.currentFilters.timeFilter = document.getElementById('timeFilterType').value;
+            this.setupTimeFilterControls();
+            this.applyFilters();
+        });
+        
+        // 标签筛选模式
+        document.querySelectorAll('input[name="tagFilterMode"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                this.currentFilters.tagFilterMode = e.target.value;
+                this.applyFilters();
+            });
+        });
+        
+        // 筛选按钮
+        document.getElementById('applyFilterButton').addEventListener('click', () => {
+            this.applyFilters();
+        });
+        
+        document.getElementById('resetFilterButton').addEventListener('click', () => {
+            this.resetFilters();
         });
         
         // 导入/导出
@@ -53,10 +97,8 @@ class BlogOrganizer {
         document.getElementById('exportTxt').addEventListener('click', () => this.exportTxt());
     }
     
-    // 修正时间设置函数
     setCurrentTime() {
         const now = new Date();
-        // 转换为本地时间字符串，格式为 YYYY-MM-DDTHH:mm
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0');
         const day = String(now.getDate()).padStart(2, '0');
@@ -71,7 +113,6 @@ class BlogOrganizer {
         const file = event.target.files[0];
         if (!file) return;
         
-        // 验证文件大小（限制为5MB）
         if (file.size > 5 * 1024 * 1024) {
             alert('文件大小不能超过5MB');
             return;
@@ -99,24 +140,30 @@ class BlogOrganizer {
             }
         };
         
-        reader.onerror = () => {
-            alert('文件读取失败');
-        };
-        
         reader.readAsDataURL(file);
     }
     
     addTag(tagName) {
         if (!tagName) return;
         
-        // 清理标签文本
-        tagName = tagName.trim().replace(/[,\s]+/g, ' ');
+        tagName = tagName.trim();
+        if (tagName.includes(',')) {
+            // 支持逗号分隔多个标签
+            tagName.split(',').forEach(tag => {
+                const trimmedTag = tag.trim();
+                if (trimmedTag && !this.tags.includes(trimmedTag)) {
+                    this.tags.push(trimmedTag);
+                }
+            });
+        } else {
+            if (!this.tags.includes(tagName)) {
+                this.tags.push(tagName);
+            }
+        }
         
-        if (!tagName || this.tags.includes(tagName)) return;
-        
-        this.tags.push(tagName);
         this.saveTags();
         this.renderTags();
+        this.renderFilterTags();
         this.updateStats();
     }
     
@@ -124,6 +171,7 @@ class BlogOrganizer {
         this.tags = this.tags.filter(tag => tag !== tagName);
         this.saveTags();
         this.renderTags();
+        this.renderFilterTags();
         this.updateStats();
     }
     
@@ -157,6 +205,244 @@ class BlogOrganizer {
             selected.push(tag.textContent.replace('×', '').trim());
         });
         return selected;
+    }
+    
+    // 时间筛选控件
+    setupTimeFilterControls() {
+        const controlsDiv = document.getElementById('timeFilterControls');
+        const filterType = document.getElementById('timeFilterType').value;
+        
+        let html = '';
+        
+        switch(filterType) {
+            case 'year':
+                html = `
+                    <input type="number" id="filterYear" class="time-control" 
+                           placeholder="年份" min="2000" max="2100" 
+                           value="${this.currentFilters.timeValues.year || ''}">
+                `;
+                break;
+                
+            case 'month':
+                html = `
+                    <input type="number" id="filterYear" class="time-control" 
+                           placeholder="年份" min="2000" max="2100"
+                           value="${this.currentFilters.timeValues.year || ''}">
+                    <input type="number" id="filterMonth" class="time-control" 
+                           placeholder="月份" min="1" max="12"
+                           value="${this.currentFilters.timeValues.month || ''}">
+                `;
+                break;
+                
+            case 'day':
+                html = `
+                    <input type="date" id="filterDate" class="time-control"
+                           value="${this.currentFilters.timeValues.date || ''}">
+                `;
+                break;
+                
+            case 'range':
+                html = `
+                    <input type="date" id="filterStartDate" class="time-control" 
+                           placeholder="开始日期"
+                           value="${this.currentFilters.timeValues.startDate || ''}">
+                    <input type="date" id="filterEndDate" class="time-control" 
+                           placeholder="结束日期"
+                           value="${this.currentFilters.timeValues.endDate || ''}">
+                `;
+                break;
+                
+            default:
+                html = '';
+        }
+        
+        controlsDiv.innerHTML = html;
+        
+        // 为动态生成的输入框添加事件监听
+        const yearInput = document.getElementById('filterYear');
+        const monthInput = document.getElementById('filterMonth');
+        const dateInput = document.getElementById('filterDate');
+        const startDateInput = document.getElementById('filterStartDate');
+        const endDateInput = document.getElementById('filterEndDate');
+        
+        if (yearInput) {
+            yearInput.addEventListener('input', () => {
+                this.currentFilters.timeValues.year = yearInput.value;
+                this.applyFilters();
+            });
+        }
+        
+        if (monthInput) {
+            monthInput.addEventListener('input', () => {
+                this.currentFilters.timeValues.month = monthInput.value;
+                this.applyFilters();
+            });
+        }
+        
+        if (dateInput) {
+            dateInput.addEventListener('change', () => {
+                this.currentFilters.timeValues.date = dateInput.value;
+                this.applyFilters();
+            });
+        }
+        
+        if (startDateInput) {
+            startDateInput.addEventListener('change', () => {
+                this.currentFilters.timeValues.startDate = startDateInput.value;
+                this.applyFilters();
+            });
+        }
+        
+        if (endDateInput) {
+            endDateInput.addEventListener('change', () => {
+                this.currentFilters.timeValues.endDate = endDateInput.value;
+                this.applyFilters();
+            });
+        }
+    }
+    
+    // 渲染筛选标签
+    renderFilterTags() {
+        const container = document.getElementById('filterTagsContainer');
+        container.innerHTML = '';
+        
+        this.tags.forEach(tag => {
+            const isActive = this.currentFilters.selectedTags.includes(tag);
+            const tagElement = document.createElement('div');
+            tagElement.className = `filter-tag ${isActive ? 'active' : ''}`;
+            tagElement.textContent = tag;
+            
+            tagElement.addEventListener('click', () => {
+                this.toggleFilterTag(tag);
+            });
+            
+            container.appendChild(tagElement);
+        });
+    }
+    
+    toggleFilterTag(tag) {
+        const index = this.currentFilters.selectedTags.indexOf(tag);
+        if (index === -1) {
+            this.currentFilters.selectedTags.push(tag);
+        } else {
+            this.currentFilters.selectedTags.splice(index, 1);
+        }
+        this.renderFilterTags();
+        this.applyFilters();
+    }
+    
+    // 应用筛选
+    applyFilters() {
+        let filtered = [...this.blogs];
+        const keyword = this.currentFilters.keyword.toLowerCase().trim();
+        
+        // 关键词筛选
+        if (keyword) {
+            filtered = filtered.filter(blog => {
+                const contentMatch = blog.content && blog.content.toLowerCase().includes(keyword);
+                const tagMatch = blog.tags && blog.tags.some(tag => 
+                    tag.toLowerCase().includes(keyword)
+                );
+                return contentMatch || tagMatch;
+            });
+        }
+        
+        // 时间筛选
+        const filterType = this.currentFilters.timeFilter;
+        if (filterType !== 'all') {
+            filtered = filtered.filter(blog => {
+                const blogDate = new Date(blog.datetime);
+                
+                switch(filterType) {
+                    case 'year':
+                        const year = parseInt(this.currentFilters.timeValues.year);
+                        if (!year) return true;
+                        return blogDate.getFullYear() === year;
+                        
+                    case 'month':
+                        const filterYear = parseInt(this.currentFilters.timeValues.year);
+                        const filterMonth = parseInt(this.currentFilters.timeValues.month);
+                        if (!filterYear || !filterMonth) return true;
+                        return blogDate.getFullYear() === filterYear && 
+                               blogDate.getMonth() + 1 === filterMonth;
+                        
+                    case 'day':
+                        const filterDateStr = this.currentFilters.timeValues.date;
+                        if (!filterDateStr) return true;
+                        const filterDate = new Date(filterDateStr);
+                        return blogDate.toDateString() === filterDate.toDateString();
+                        
+                    case 'range':
+                        const startStr = this.currentFilters.timeValues.startDate;
+                        const endStr = this.currentFilters.timeValues.endDate;
+                        if (!startStr || !endStr) return true;
+                        const startDate = new Date(startStr);
+                        const endDate = new Date(endStr);
+                        endDate.setHours(23, 59, 59, 999);
+                        return blogDate >= startDate && blogDate <= endDate;
+                        
+                    default:
+                        return true;
+                }
+            });
+        }
+        
+        // 标签筛选
+        const selectedTags = this.currentFilters.selectedTags;
+        if (selectedTags.length > 0) {
+            filtered = filtered.filter(blog => {
+                const blogTags = blog.tags || [];
+                
+                switch(this.currentFilters.tagFilterMode) {
+                    case 'any':
+                        return selectedTags.some(tag => blogTags.includes(tag));
+                    case 'allSelected':
+                        return selectedTags.every(tag => blogTags.includes(tag));
+                    default:
+                        return true;
+                }
+            });
+        }
+        
+        this.filteredBlogs = filtered;
+        this.renderBlogList();
+        this.updateFilterStats();
+    }
+    
+    // 重置筛选
+    resetFilters() {
+        this.currentFilters = {
+            keyword: '',
+            timeFilter: 'all',
+            timeValues: {},
+            tagFilterMode: 'all',
+            selectedTags: []
+        };
+        
+        // 重置UI
+        document.getElementById('keywordSearch').value = '';
+        document.getElementById('timeFilterType').value = 'all';
+        document.querySelector('#tagFilterAll').checked = true;
+        
+        this.setupTimeFilterControls();
+        this.renderFilterTags();
+        this.applyFilters();
+    }
+    
+    // 更新筛选统计
+    updateFilterStats() {
+        const total = this.blogs.length;
+        const filtered = this.filteredBlogs.length;
+        const statsElement = document.getElementById('filterStats');
+        const countElement = document.getElementById('filteredCount');
+        
+        countElement.textContent = filtered;
+        
+        if (filtered === total) {
+            statsElement.textContent = `显示全部 ${filtered} 条博客`;
+        } else {
+            statsElement.textContent = `显示 ${filtered} 条博客 (共 ${total} 条)`;
+        }
     }
     
     saveBlog() {
@@ -202,7 +488,7 @@ class BlogOrganizer {
         }
         
         this.saveBlogs();
-        this.renderBlogList();
+        this.applyFilters(); // 更新筛选结果
         this.clearForm();
         this.updateStats();
     }
@@ -211,11 +497,9 @@ class BlogOrganizer {
         const blog = this.blogs.find(b => b.id === id);
         if (!blog) return;
         
-        // 填充表单
         document.getElementById('contentInput').value = blog.content || '';
         
         if (blog.datetime) {
-            // 转换时间格式
             const date = new Date(blog.datetime);
             const localDateTime = date.toISOString().slice(0, 16);
             document.getElementById('datetimeInput').value = localDateTime;
@@ -245,7 +529,7 @@ class BlogOrganizer {
         // 设置标签选中状态
         document.querySelectorAll('.tag').forEach(tag => {
             const tagText = tag.textContent.replace('×', '').trim();
-            if (blog.tags.includes(tagText)) {
+            if (blog.tags && blog.tags.includes(tagText)) {
                 tag.classList.add('active');
             } else {
                 tag.classList.remove('active');
@@ -255,7 +539,6 @@ class BlogOrganizer {
         this.editingId = id;
         document.getElementById('saveButton').innerHTML = '<i class="fas fa-edit"></i> 更新博客';
         
-        // 滚动到表单
         document.querySelector('#contentInput').scrollIntoView({ behavior: 'smooth' });
     }
     
@@ -263,7 +546,7 @@ class BlogOrganizer {
         if (confirm('确定要删除这条博客吗？')) {
             this.blogs = this.blogs.filter(blog => blog.id !== id);
             this.saveBlogs();
-            this.renderBlogList();
+            this.applyFilters(); // 更新筛选结果
             this.updateStats();
         }
     }
@@ -290,12 +573,16 @@ class BlogOrganizer {
         const container = document.getElementById('blogList');
         container.innerHTML = '';
         
-        if (this.blogs.length === 0) {
-            container.innerHTML = '<div class="blog-item" style="text-align: center; color: #999;">暂无博客，开始创建第一条吧</div>';
+        if (this.filteredBlogs.length === 0) {
+            let message = '暂无博客，开始创建第一条吧';
+            if (this.blogs.length > 0 && this.filteredBlogs.length === 0) {
+                message = '没有找到符合条件的博客';
+            }
+            container.innerHTML = `<div class="blog-item" style="text-align: center; color: #999;">${message}</div>`;
             return;
         }
         
-        this.blogs.forEach(blog => {
+        this.filteredBlogs.forEach(blog => {
             const date = new Date(blog.datetime);
             const dateStr = date.toLocaleDateString('zh-CN', { 
                 year: 'numeric',
@@ -316,7 +603,7 @@ class BlogOrganizer {
                 <div class="blog-item-content">
                     ${blog.content ? blog.content.substring(0, 150) + (blog.content.length > 150 ? '...' : '') : '[多媒体内容]'}
                 </div>
-                ${blog.tags.length > 0 ? `
+                ${blog.tags && blog.tags.length > 0 ? `
                     <div class="blog-item-tags">
                         ${blog.tags.map(tag => `<span class="blog-tag">${tag}</span>`).join('')}
                     </div>
@@ -331,7 +618,6 @@ class BlogOrganizer {
                 </div>
             `;
             
-            // 添加编辑和删除按钮事件
             item.querySelector('.edit-btn').addEventListener('click', (e) => {
                 e.stopPropagation();
                 this.editBlog(blog.id);
@@ -372,25 +658,17 @@ class BlogOrganizer {
     
     exportHtml() {
         try {
-            // 获取样式内容
-            const styleResponse = fetch('style.css')
-                .then(response => response.text())
-                .catch(() => {
-                    // 如果无法获取外部CSS，使用内联基本样式
-                    return `body { font-family: monospace; margin: 20px; background: #fafafa; color: #333; }
-                    .blog-post { background: white; border: 1px solid #ddd; padding: 15px; margin: 10px 0; }
-                    .tags { display: flex; flex-wrap: wrap; gap: 5px; margin: 10px 0; }
-                    .tag { background: #eee; padding: 3px 8px; font-size: 12px; }`;
-                });
+            // 使用筛选后的博客或所有博客
+            const exportBlogs = this.filteredBlogs.length > 0 ? this.filteredBlogs : this.blogs;
             
             // 生成博客内容HTML
-            const blogPostsHtml = this.blogs.map(blog => {
+            const blogPostsHtml = exportBlogs.map(blog => {
                 const date = new Date(blog.datetime);
                 const dateStr = date.toLocaleDateString('zh-CN') + ' ' + 
                               date.toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'});
                 
                 return `
-                <div class="blog-post">
+                <div class="blog-post" data-id="${blog.id}">
                     <div class="post-header">
                         <small>${dateStr}</small>
                         <small>#${blog.id.toString().slice(-4)}</small>
@@ -401,7 +679,7 @@ class BlogOrganizer {
                             ? `<img src="${blog.media}" style="max-width: 100%; margin: 10px 0;">`
                             : `<video src="${blog.media}" controls style="max-width: 100%; margin: 10px 0;"></video>`
                     ) : ''}
-                    ${blog.tags.length > 0 ? `
+                    ${blog.tags && blog.tags.length > 0 ? `
                         <div class="tags">
                             ${blog.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
                         </div>
@@ -441,6 +719,21 @@ class BlogOrganizer {
         .header-info { 
             font-size: 12px; 
             color: #888; 
+        }
+        .search-box {
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
         }
         .blog-post { 
             background: white; 
@@ -485,9 +778,16 @@ class BlogOrganizer {
             border: 1px solid #ddd;
             border-radius: 4px;
         }
+        .stats {
+            text-align: center;
+            margin: 10px 0;
+            color: #666;
+            font-size: 13px;
+        }
         @media (max-width: 600px) {
             body { padding: 10px; }
             .blog-post { padding: 15px; }
+            .post-header { flex-direction: column; gap: 5px; }
         }
     </style>
 </head>
@@ -496,36 +796,57 @@ class BlogOrganizer {
         <h1>📝 博客存档</h1>
         <div class="header-info">
             导出时间：${new Date().toLocaleString('zh-CN')} | 
-            共 ${this.blogs.length} 条博客
+            共 ${exportBlogs.length} 条博客
         </div>
     </div>
     
-    ${blogPostsHtml}
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="搜索博客内容或标签...">
+        <div class="stats">
+            显示 <span id="resultCount">${exportBlogs.length}</span> 条结果
+        </div>
+    </div>
+    
+    <div id="blogContainer">
+        ${blogPostsHtml}
+    </div>
     
     <div class="blog-post" style="text-align: center; color: #888; font-size: 12px;">
         使用像素博客整理器生成
     </div>
     
     <script>
-        // 添加简单的搜索功能
         const posts = document.querySelectorAll('.blog-post');
-        const searchDiv = document.createElement('div');
-        searchDiv.innerHTML = '<input type="text" placeholder="搜索博客内容..." style="width: 100%; padding: 10px; margin: 20px 0; border: 1px solid #ddd; border-radius: 4px; font-family: monospace;">';
-        document.querySelector('.header').after(searchDiv);
+        const searchInput = document.getElementById('searchInput');
+        const resultCount = document.getElementById('resultCount');
         
-        const searchInput = searchDiv.querySelector('input');
         searchInput.addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase();
+            let visibleCount = 0;
+            
             posts.forEach(post => {
                 const content = post.textContent.toLowerCase();
-                post.style.display = content.includes(searchTerm) ? 'block' : 'none';
+                const tags = post.querySelectorAll('.tag');
+                const postTags = Array.from(tags).map(tag => tag.textContent.toLowerCase());
+                
+                const matchesSearch = !searchTerm || 
+                    content.includes(searchTerm) || 
+                    postTags.some(tag => tag.includes(searchTerm));
+                
+                if (matchesSearch) {
+                    post.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    post.style.display = 'none';
+                }
             });
+            
+            resultCount.textContent = visibleCount;
         });
     </script>
 </body>
 </html>`;
             
-            // 创建下载
             const blob = new Blob([htmlContent], {type: 'text/html;charset=utf-8'});
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -543,20 +864,22 @@ class BlogOrganizer {
     }
     
     exportTxt() {
+        const exportBlogs = this.filteredBlogs.length > 0 ? this.filteredBlogs : this.blogs;
+        
         let txtContent = `像素博客导出\n`;
         txtContent += `导出时间：${new Date().toLocaleString('zh-CN')}\n`;
-        txtContent += `博客数量：${this.blogs.length}\n`;
+        txtContent += `博客数量：${exportBlogs.length}\n`;
         txtContent += `标签数量：${this.tags.length}\n`;
         txtContent += '='.repeat(50) + '\n\n';
         
-        this.blogs.forEach((blog, index) => {
+        exportBlogs.forEach((blog, index) => {
             const date = new Date(blog.datetime);
             const dateStr = date.toLocaleString('zh-CN');
             
             txtContent += `【博客 #${index + 1}】\n`;
             txtContent += `时间：${dateStr}\n`;
             txtContent += `ID：#${blog.id.toString().slice(-4)}\n`;
-            txtContent += `标签：${blog.tags.join(', ') || '无'}\n`;
+            txtContent += `标签：${(blog.tags && blog.tags.join(', ')) || '无'}\n`;
             txtContent += '-'.repeat(30) + '\n';
             txtContent += `${blog.content || '[多媒体内容]'}\n`;
             if (blog.media) {
@@ -585,10 +908,8 @@ class BlogOrganizer {
             try {
                 if (file.name.endsWith('.json')) {
                     this.importJson(e.target.result);
-                } else if (file.name.endsWith('.html')) {
-                    this.importHtml(e.target.result);
                 } else {
-                    alert('请选择.json或.html文件');
+                    alert('请选择.json文件');
                 }
             } catch (error) {
                 alert('导入失败：' + error.message);
@@ -602,97 +923,69 @@ class BlogOrganizer {
     importJson(content) {
         const data = JSON.parse(content);
         
-        if (!data.blogs || !Array.isArray(data.blogs)) {
+        // 兼容性处理
+        if (Array.isArray(data)) {
+            // 旧版本数据，直接是博客数组
+            this.importOldFormat(data);
+        } else if (data.blogs && Array.isArray(data.blogs)) {
+            // 新版本数据
+            this.importNewFormat(data);
+        } else {
             throw new Error('无效的数据格式');
-        }
-        
-        const existingIds = new Set(this.blogs.map(blog => blog.id));
-        const newBlogs = data.blogs.filter(blog => !existingIds.has(blog.id));
-        
-        this.blogs = [...this.blogs, ...newBlogs];
-        
-        if (data.tags && Array.isArray(data.tags)) {
-            data.tags.forEach(tag => {
-                if (!this.tags.includes(tag)) {
-                    this.tags.push(tag);
-                }
-            });
         }
         
         this.saveBlogs();
         this.saveTags();
         this.renderBlogList();
         this.renderTags();
+        this.renderFilterTags();
+        this.applyFilters();
         this.updateStats();
-        
-        alert(`导入成功！\n新增博客：${newBlogs.length}条\n现有博客：${this.blogs.length}条`);
     }
     
-    importHtml(content) {
-        try {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(content, 'text/html');
+    importOldFormat(blogsArray) {
+        const existingIds = new Set(this.blogs.map(blog => blog.id));
+        
+        blogsArray.forEach(blog => {
+            // 确保博客有必要的字段
+            if (!blog.id) blog.id = Date.now() + Math.random();
+            if (!blog.created) blog.created = new Date().toISOString();
+            if (!blog.tags) blog.tags = [];
             
-            // 尝试从script标签中提取数据
-            let importedBlogs = [];
-            const scripts = doc.querySelectorAll('script');
-            
-            scripts.forEach(script => {
-                const text = script.textContent;
-                const matches = text.match(/const blogData = (\[[\s\S]*?\]);/);
-                if (matches) {
-                    try {
-                        importedBlogs = JSON.parse(matches[1]);
-                    } catch (e) {
-                        console.warn('解析JSON失败:', e);
-                    }
+            if (!existingIds.has(blog.id)) {
+                this.blogs.push(blog);
+                existingIds.add(blog.id);
+                
+                // 提取标签
+                if (blog.tags && Array.isArray(blog.tags)) {
+                    blog.tags.forEach(tag => {
+                        if (tag && !this.tags.includes(tag)) {
+                            this.tags.push(tag);
+                        }
+                    });
+                }
+            }
+        });
+    }
+    
+    importNewFormat(data) {
+        const existingIds = new Set(this.blogs.map(blog => blog.id));
+        
+        // 导入博客
+        data.blogs.forEach(blog => {
+            if (!existingIds.has(blog.id)) {
+                this.blogs.push(blog);
+                existingIds.add(blog.id);
+            }
+        });
+        
+        // 导入标签
+        if (data.tags && Array.isArray(data.tags)) {
+            data.tags.forEach(tag => {
+                if (tag && !this.tags.includes(tag)) {
+                    this.tags.push(tag);
                 }
             });
-            
-            // 如果script中没有找到，尝试从页面内容中解析
-            if (importedBlogs.length === 0) {
-                const posts = doc.querySelectorAll('.blog-post');
-                importedBlogs = Array.from(posts).map((post, index) => {
-                    const header = post.querySelector('.post-header');
-                    const dateText = header ? header.textContent : '';
-                    const content = post.querySelector('.post-content')?.textContent || '';
-                    const tags = Array.from(post.querySelectorAll('.tag')).map(tag => tag.textContent);
-                    
-                    return {
-                        id: Date.now() + index,
-                        content: content.trim(),
-                        datetime: new Date().toISOString(),
-                        tags: tags,
-                        created: new Date().toISOString()
-                    };
-                });
-            }
-            
-            if (importedBlogs.length > 0) {
-                const existingIds = new Set(this.blogs.map(blog => blog.id));
-                const newBlogs = importedBlogs.filter(blog => !existingIds.has(blog.id));
-                this.blogs = [...this.blogs, ...newBlogs];
-                
-                // 提取所有标签
-                const allTags = new Set(this.tags);
-                importedBlogs.forEach(blog => {
-                    blog.tags.forEach(tag => allTags.add(tag));
-                });
-                this.tags = Array.from(allTags);
-                
-                this.saveBlogs();
-                this.saveTags();
-                this.renderBlogList();
-                this.renderTags();
-                this.updateStats();
-                
-                alert(`导入成功！\n新增博客：${newBlogs.length}条`);
-            } else {
-                alert('在文件中未找到可导入的博客数据');
-            }
-        } catch (error) {
-            console.error('导入HTML失败:', error);
-            alert('导入失败：' + error.message);
         }
     }
     
@@ -702,7 +995,25 @@ class BlogOrganizer {
     
     loadBlogs() {
         const data = localStorage.getItem('pixel_blogs');
-        return data ? JSON.parse(data) : [];
+        if (!data) return [];
+        
+        try {
+            const blogs = JSON.parse(data);
+            // 确保每个博客都有必要的字段
+            return blogs.map(blog => ({
+                id: blog.id || Date.now() + Math.random(),
+                content: blog.content || '',
+                media: blog.media || null,
+                mediaType: blog.mediaType || null,
+                datetime: blog.datetime || blog.created || new Date().toISOString(),
+                tags: blog.tags || [],
+                created: blog.created || new Date().toISOString(),
+                updated: blog.updated || null
+            }));
+        } catch (e) {
+            console.error('加载博客数据失败:', e);
+            return [];
+        }
     }
     
     saveTags() {

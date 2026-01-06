@@ -1,825 +1,757 @@
 <!DOCTYPE html>
-    <html lang="zh-CN">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>双区域像素贩卖机</title>
-        <style>
-            /* 基础样式重置 */
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>双区域像素贩卖机</title>
+    <style>
+        /* 基础样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: ;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        /* 主容器 - 将两个贩卖机并排 */
+        .vendor-container {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            gap: 0px;
+            max-width: 850px;
+            margin: 0 auto;
+        }
+        
+        /* 共同样式 */
+        .vendor-box {
+            min-height: 600px;
+            height: auto;
+            background-color: #2a2d43;
+            border: 8px solid #1a1c2c;
+            box-shadow: 
+                10px 10px 0 #000000,
+                inset 0 0 0 4px #3a3f5f;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+        
+        /* 像素装饰边框 */
+        .pixel-border {
+            position: absolute;
+            border-style: solid;
+            border-color: #ff9966;
+            pointer-events: none;
+        }
+        
+        .border-top {
+            top: 0;
+            left: 20px;
+            right: 20px;
+            height: 4px;
+            border-width: 4px 0 0 0;
+        }
+        
+        .border-bottom {
+            bottom: 0;
+            left: 20px;
+            right: 20px;
+            height: 4px;
+            border-width: 0 0 4px 0;
+        }
+        
+        .border-left {
+            left: 0;
+            top: 20px;
+            bottom: 20px;
+            width: 4px;
+            border-width: 0 0 0 4px;
+        }
+        
+        .border-right {
+            right: 0;
+            top: 20px;
+            bottom: 20px;
+            width: 4px;
+            border-width: 0 4px 0 0;
+        }
+        
+        /* ========== 左边：文本贩卖机 ========== */
+        .text-vendor {
+            width: 380px;
+            position: relative;
+        }
+        
+        /* 标题样式 */
+        .pixel-title {
+            text-align: center;
+            color: #ff9966;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 0 #1a1c2c;
+            letter-spacing: 2px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .pixel-title::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 20%;
+            right: 20%;
+            height: 4px;
+            background-color: #3a69ee;
+            box-shadow: 2px 2px 0 #1a1c2c;
+            /* 呼吸效果的闪动 */
+            animation: breathe 5s ease-in-out infinite;
+        }
+        
+        @keyframes breathe {
+            0%, 100% {
+                opacity: 0.3;
+                transform: scaleX(0.8);
             }
-            
-            body {
-                background: ;
-                min-height: 100vh;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                padding: 20px;
-                font-family: 'Courier New', monospace;
-            }
-            
-            /* 主容器 - 将两个贩卖机并排 */
-            .vendor-container {
-                display: flex;
-                justify-content: center;
-                align-items: stretch;
-                gap: 0px;
-                max-width: 850px;
-                margin: 0 auto;
-            }
-            
-            /* 共同样式 */
-            .vendor-box {
-                min-height: 600px;
-                height: auto;
-                background-color: #2a2d43;
-                border: 8px solid #1a1c2c;
-                box-shadow: 
-                    10px 10px 0 #000000,
-                    inset 0 0 0 4px #3a3f5f;
-                padding: 20px;
-                font-family: 'Courier New', monospace;
-                image-rendering: pixelated;
-                image-rendering: crisp-edges;
-            }
-            
-            /* 像素装饰边框 */
-            .pixel-border {
-                position: absolute;
-                border-style: solid;
-                border-color: #ff9966;
-                pointer-events: none;
-            }
-            
-            .border-top {
-                top: 0;
-                left: 20px;
-                right: 20px;
-                height: 4px;
-                border-width: 4px 0 0 0;
-            }
-            
-            .border-bottom {
-                bottom: 0;
-                left: 20px;
-                right: 20px;
-                height: 4px;
-                border-width: 0 0 4px 0;
-            }
-            
-            .border-left {
-                left: 0;
-                top: 20px;
-                bottom: 20px;
-                width: 4px;
-                border-width: 0 0 0 4px;
-            }
-            
-            .border-right {
-                right: 0;
-                top: 20px;
-                bottom: 20px;
-                width: 4px;
-                border-width: 0 4px 0 0;
-            }
-            
-            /* ========== 左边：文本贩卖机 ========== */
-            .text-vendor {
-                width: 380px;
-                position: relative;
-            }
-            
-            /* 标题样式 */
-            .pixel-title {
-                text-align: center;
-                color: #ff9966;
-                font-size: 24px;
-                font-weight: bold;
-                margin-bottom: 20px;
-                text-shadow: 3px 3px 0 #1a1c2c;
-                letter-spacing: 2px;
-                position: relative;
-                padding-bottom: 10px;
-            }
-            
-            .pixel-title::after {
-                content: "";
-                position: absolute;
-                bottom: 0;
-                left: 20%;
-                right: 20%;
-                height: 4px;
-                background-color: #3a69ee;
-                box-shadow: 2px 2px 0 #1a1c2c;
-                /* 呼吸效果的闪动 */
-                animation: breathe 5s ease-in-out infinite;
-            }
-            
-            @keyframes breathe {
-                0%, 100% {
-                    opacity: 0.3;
-                    transform: scaleX(0.8);
-                }
-                50% {
-                    opacity: 1;
-                    transform: scaleX(1);
-                }
-            }
-            
-            /* 字符装饰 */
-            .ascii-decoration {
-                color: #3a69ee;
-                font-size: 12px;
-                line-height: 1;
-                text-align: center;
-                margin-bottom: 15px;
-                opacity: 0.8;
-            }
-            
-            /* 显示区域 */
-            .pixel-display {
-                background-color: #1a1c2c;
-                border: 6px solid #3a3f5f;
-                padding: 20px;
-                min-height: 160px;
-                margin-bottom: 20px;
-                position: relative;
-                box-shadow: inset 0 0 0 4px #2a2d43;
-            }
-            
-            .display-text {
-                color: #ffecb3;
-                font-size: 16px;
-                line-height: 1.5;
-                text-align: left;
-                font-family: 'Courier New', monospace;
-            }
-            
-            /* 加载动画 */
-            .pixel-loading {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                height: 100%;
-            }
-            
-            .loading-text {
-                color: #ff9966;
-                font-size: 18px;
-                margin-bottom: 15px;
-                font-weight: bold;
-            }
-            
-            .pixel-loader {
-                display: flex;
-                gap: 8px;
-            }
-            
-            .pixel-dot {
-                width: 12px;
-                height: 12px;
-                background-color: #3a69ee;
-                animation: pixel-blink 1.2s infinite;
-                box-shadow: 2px 2px 0 #1a1c2c;
-            }
-            
-            .pixel-dot:nth-child(2) {
-                animation-delay: 0.2s;
-                background-color: #ff9966;
-            }
-            
-            .pixel-dot:nth-child(3) {
-                animation-delay: 0.4s;
-                background-color: #b967ff;
-            }
-            
-            @keyframes pixel-blink {
-                0%, 100% {
-                    opacity: 0.3;
-                    transform: scale(1);
-                }
-                50% {
-                    opacity: 1;
-                    transform: scale(1.2);
-                }
-            }
-            
-            /* 投币区域 */
-            .coin-section {
-                text-align: center;
-                margin-bottom: 15px;
-            }
-            
-            .coin-count {
-                color: #ffecb3;
-                font-size: 18px;
-                margin-bottom: 15px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 10px;
-            }
-            
-            .coin-icon {
-                color: #ffcc00;
-                font-size: 24px;
-            }
-            
-            /* 投币按钮 */
-            .pixel-btn {
-                display: block;
-                width: 200px;
-                margin: 0 auto;
-                padding: 15px;
-                background-color: #ff5d73;
-                color: #ffecb3;
-                border: none;
-                border-radius: 0;
-                font-size: 20px;
-                font-weight: bold;
-                cursor: pointer;
-                text-transform: uppercase;
-                letter-spacing: 2px;
-                box-shadow: 
-                    0 6px 0 #cc4a5c,
-                    inset 0 -4px 0 rgba(0, 0, 0, 0.2),
-                    inset 0 4px 0 rgba(255, 255, 255, 0.2);
-                position: relative;
-                transition: all 0.1s;
-                font-family: 'Courier New', monospace;
-            }
-            
-            .pixel-btn:hover {
-                background-color: #ff6b7f;
-                transform: translateY(2px);
-                box-shadow: 
-                    0 4px 0 #cc4a5c,
-                    inset 0 -4px 0 rgba(0, 0, 0, 0.2),
-                    inset 0 4px 0 rgba(255, 255, 255, 0.2);
-            }
-            
-            .pixel-btn:active {
-                transform: translateY(6px);
-                box-shadow: 
-                    0 0 0 #cc4a5c,
-                    inset 0 -4px 0 rgba(0, 0, 0, 0.2),
-                    inset 0 4px 0 rgba(255, 255, 255, 0.2);
-            }
-            
-            /* 像素装饰图案 */
-            .pixel-art {
-                color: #3a69ee;
-                font-size: 14px;
-                line-height: 1;
-                text-align: center;
-                margin-top: 20px;
-                opacity: 0.7;
-            }
-            
-            /* 底部装饰 */
-            .pixel-footer {
-                margin-top: 15px;
-                text-align: center;
-                color: #3a69ee;
-                font-size: 12px;
-                padding-top: 10px;
-                border-top: 3px dotted #3a3f5f;
-            }
-            
-            /* ========== 右边：图片贩卖机 ========== */
-            .image-vendor {
-                width: 200px;
-                display: flex;
-                flex-direction: column;
-                position: relative;
-            }
-            
-            /* 图片贩卖机标题 */
-            .image-title {
-                text-align: center;
-                color: #ff9966;
-                font-size: 24px;
-                font-weight: bold;
-                margin-bottom: 15px;
-                text-shadow: 3px 3px 0 #1a1c2c;
-                position: relative;
-                padding-bottom: 10px;
-            }
-            
-            .image-title::after {
-                content: "";
-                position: absolute;
-                bottom: 0;
-                left: 25%;
-                right: 25%;
-                height: 4px;
-                background-color: #3a69ee;
-                box-shadow: 2px 2px 0 #1a1c2c;
-            }
-            
-            /* 图片显示区域 */
-            .image-display {
-                flex: 1;
-                background-color: #1a1c2c;
-                border: 6px solid #3a3f5f;
-                margin-bottom: 20px;
-                position: relative;
-                overflow: hidden;
-                box-shadow: inset 0 0 0 4px #2a2d43;
-            }
-            
-            /* 图片轮播 */
-            .image-slide {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                opacity: 0;
-                transition: opacity 1s ease-in-out;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 15px;
-            }
-            
-            .image-slide.active {
+            50% {
                 opacity: 1;
+                transform: scaleX(1);
             }
-            
-            .image-slide img {
-                max-width: 100%;
-                max-height: 100%;
-                object-fit: contain;
-                border: 3px solid #3a3f5f;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* 字符装饰 */
+        .ascii-decoration {
+            color: #3a69ee;
+            font-size: 12px;
+            line-height: 1;
+            text-align: center;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+        
+        /* 显示区域 - 修改为固定高度 */
+        .pixel-display {
+            background-color: #1a1c2c;
+            border: 6px solid #3a3f5f;
+            padding: 20px;
+            height: 160px; /* 修改为固定高度 */
+            min-height: 160px; /* 保留最小高度 */
+            max-height: 160px; /* 添加最大高度 */
+            margin-bottom: 20px;
+            position: relative;
+            box-shadow: inset 0 0 0 4px #2a2d43;
+            overflow-y: auto; /* 添加滚动条，当内容超出时 */
+        }
+        
+        .display-text {
+            color: #ffecb3;
+            font-size: 16px;
+            line-height: 1.5;
+            text-align: left;
+            font-family: 'Courier New', monospace;
+            min-height: 0; /* 重置最小高度 */
+        }
+        
+        /* 加载动画 */
+        .pixel-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        
+        .loading-text {
+            color: #ff9966;
+            font-size: 18px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .pixel-loader {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .pixel-dot {
+            width: 12px;
+            height: 12px;
+            background-color: #3a69ee;
+            animation: pixel-blink 1.2s infinite;
+            box-shadow: 2px 2px 0 #1a1c2c;
+        }
+        
+        .pixel-dot:nth-child(2) {
+            animation-delay: 0.2s;
+            background-color: #ff9966;
+        }
+        
+        .pixel-dot:nth-child(3) {
+            animation-delay: 0.4s;
+            background-color: #b967ff;
+        }
+        
+        @keyframes pixel-blink {
+            0%, 100% {
+                opacity: 0.3;
+                transform: scale(1);
             }
-            
-            /* 默认图片占位符 */
-            .image-placeholder {
-                display: flex;
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+        
+        /* 投币区域 */
+        .coin-section {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .coin-count {
+            color: #ffecb3;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+                align-items: center;
+            gap: 10px;
+        }
+        
+        .coin-icon {
+            color: #ffcc00;
+            font-size: 24px;
+        }
+        
+        /* 投币按钮 */
+        .pixel-btn {
+            display: block;
+            width: 200px;
+            margin: 0 auto;
+            padding: 15px;
+            background-color: #ff5d73;
+            color: #ffecb3;
+            border: none;
+            border-radius: 0;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 
+                0 6px 0 #cc4a5c,
+                inset 0 -4px 0 rgba(0, 0, 0, 0.2),
+                inset 0 4px 0 rgba(255, 255, 255, 0.2);
+            position: relative;
+            transition: all 0.1s;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .pixel-btn:hover {
+            background-color: #ff6b7f;
+            transform: translateY(2px);
+            box-shadow: 
+                0 4px 0 #cc4a5c,
+                inset 0 -4px 0 rgba(0, 0, 0, 0.2),
+                inset 0 4px 0 rgba(255, 255, 255, 0.2);
+        }
+        
+        .pixel-btn:active {
+            transform: translateY(6px);
+            box-shadow: 
+                0 0 0 #cc4a5c,
+                inset 0 -4px 0 rgba(0, 0, 0, 0.2),
+                inset 0 4px 0 rgba(255, 255, 255, 0.2);
+        }
+        
+        /* 像素装饰图案 */
+        .pixel-art {
+            color: #3a69ee;
+            font-size: 14px;
+            line-height: 1;
+            text-align: center;
+            margin-top: 20px;
+            opacity: 0.7;
+        }
+        
+        /* 底部装饰 */
+        .pixel-footer {
+            margin-top: 15px;
+            text-align: center;
+            color: #3a69ee;
+            font-size: 12px;
+            padding-top: 10px;
+            border-top: 3px dotted #3a3f5f;
+        }
+        
+        /* ========== 右边：图片贩卖机 ========== */
+        .image-vendor {
+            width: 200px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        /* 图片贩卖机标题 */
+        .image-title {
+            text-align: center;
+            color: #ff9966;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-shadow: 3px 3px 0 #1a1c2c;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .image-title::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 25%;
+            right: 25%;
+            height: 4px;
+            background-color: #3a69ee;
+            box-shadow: 2px 2px 0 #1a1c2c;
+        }
+        
+        /* 图片显示区域 */
+        .image-display {
+            flex: 1;
+            background-color: #1a1c2c;
+            border: 6px solid #3a3f5f;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 0 4px #2a2d43;
+        }
+        
+        /* 图片轮播 */
+        .image-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+        
+        .image-slide.active {
+            opacity: 1;
+        }
+        
+        .image-slide img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border: 3px solid #3a3f5f;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* 默认图片占位符 */
+        .image-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            color: #7a7f9f;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .placeholder-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #3a69ee;
+        }
+        
+        /* 图片计数器 */
+        .image-counter {
+            text-align: center;
+            color: #ffecb3;
+            font-size: 16px;
+            margin-bottom: 15px;
+            padding: 8px;
+            background-color: #1a1c2c;
+            border: 3px solid #3a3f5f;
+        }
+        
+        .counter-text {
+            color: #3a69ee;
+            font-weight: bold;
+        }
+        
+        /* 图片描述 */
+        .image-description {
+            text-align: center;
+            color: #ffecb3;
+            font-size: 14px;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: rgba(26, 28, 44, 0.7);
+            border: 2px solid #3a3f5f;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 850px) {
+            .vendor-container {
                 flex-direction: column;
                 align-items: center;
-                justify-content: center;
+                max-width: 400px;
+            }
+            
+            .text-vendor,
+            .image-vendor {
                 width: 100%;
-                height: 100%;
-                color: #7a7f9f;
-                text-align: center;
-                padding: 20px;
             }
+        }
+    </style>
+</head>
+<body>
+    <!-- 主容器：包含左右两个贩卖机 -->
+    <div class="vendor-container">
+        
+        <!-- 左边：文本贩卖机 -->
+        <div class="text-vendor vendor-box">
+            <!-- 装饰边框 -->
+            <div class="border-top pixel-border"></div>
+            <div class="border-bottom pixel-border"></div>
+            <div class="border-left pixel-border"></div>
+            <div class="border-right pixel-border"></div>
             
-            .placeholder-icon {
-                font-size: 48px;
-                margin-bottom: 15px;
-                color: #3a69ee;
-            }
+            <!-- 标题 -->
+            <h1 class="pixel-title"><span style="text-shadow: 0 0 10px #ff6b9d, 0 0 20px #ff6b9d;">BOTTLED TWILIGHT</span></h1>
             
-            /* 图片计数器 */
-            .image-counter {
-                text-align: center;
-                color: #ffecb3;
-                font-size: 16px;
-                margin-bottom: 15px;
-                padding: 8px;
-                background-color: #1a1c2c;
-                border: 3px solid #3a3f5f;
-            }
+            <!-- ASCII字符装饰 -->
+            <div class="ascii-decoration" style="color: #E6F0FF">
+                <pre>[ 暮光贩卖机 ]</pre>
+            </div>
             
-            .counter-text {
-                color: #3a69ee;
-                font-weight: bold;
-            }
-            
-            /* 图片描述 */
-            .image-description {
-                text-align: center;
-                color: #ffecb3;
-                font-size: 14px;
-                margin-top: 10px;
-                padding: 10px;
-                background-color: rgba(26, 28, 44, 0.7);
-                border: 2px solid #3a3f5f;
-                min-height: 60px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            
-            /* 响应式调整 */
-            @media (max-width: 850px) {
-                .vendor-container {
-                    flex-direction: column;
-                    align-items: center;
-                    max-width: 400px;
-                }
-                
-                .text-vendor,
-                .image-vendor {
-                    width: 100%;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <!-- 主容器：包含左右两个贩卖机 -->
-        <div class="vendor-container">
-            
-            <!-- 左边：文本贩卖机 -->
-            <div class="text-vendor vendor-box">
-                <!-- 装饰边框 -->
-                <div class="border-top pixel-border"></div>
-                <div class="border-bottom pixel-border"></div>
-                <div class="border-left pixel-border"></div>
-                <div class="border-right pixel-border"></div>
-                
-                <!-- 标题 -->
-                <h1 class="pixel-title" span style="text-shadow: 0 0 10px #ff6b9d, 0 0 20px #ff6b9d;">BOTTLED TWILIGHT</h1 span>
-                
-                <!-- ASCII字符装饰 -->
-                <div class="ascii-decoration" style="color: #E6F0FF">
-                    <pre>[ 暮光贩卖机 ]</pre>
-                </div>
-                
-                <!-- 显示区域 -->
-                <div class="pixel-display">
-                    <div class="display-text" id="displayText">
-                        WELCOME TO PIXEL VENDOR!<br>
-                        INSERT COIN AND PRESS BUTTON
-                    </div>
-                </div>
-                
-                <!-- 投币区域 -->
-                <div class="coin-section">
-                    <div class="coin-count">
-                        <span class="coin-icon">🪙</span>
-                        COINS: <span id="coinCount">0</span>
-                    </div>
-                    
-                    <!-- 投币按钮 -->
-                    <button class="pixel-btn" id="coinBtn">
-                        INSERT COIN
-                    </button>
-                </div>
-                
-                <!-- 像素装饰图案 -->
-                <div class="pixel-art" style="color: #E6F0FF">
-                    <pre>
-  ██████████████
- ██░░░░░░░░░░░░██
-██░░░░░░░░░░░░░░██
-██░░░░░░░░░░░░░░██
-██░░░░░░░░░░░░░░██
- ██░░░░░░░░░░░░██
-  ██████████████
-                    </pre>
-                </div>
-                
-                <!-- 底部信息 -->
-                <div class="pixel-footer">
-                    PIXEL VENDOR 3000 | RETRO STYLE
+            <!-- 显示区域 -->
+            <div class="pixel-display">
+                <div class="display-text" id="displayText">
+                    只是一个卖瓶装暮光的笨机器<br>
+                    INSERT COIN AND PRESS BUTTON
                 </div>
             </div>
             
-            <!-- 右边：图片贩卖机 -->
-            <div class="image-vendor vendor-box">
-                <!-- 装饰边框 -->
-                <!-- 标题 -->
-                <h2 class="image-title">██████████</h2>
-                
-                <!-- 图片显示区域 -->
-                <div class="image-display">
-                    <!-- 图片轮播 -->
-                    <div class="image-slide active" data-index="1">
-                        <!-- 这里可以替换为你的图片URL -->
-                        <img src="images/index/DONUT.jpg" alt="1">
-                    </div>
-                    
-                    <div class="image-slide" data-index="2">
-                        <div class="image-placeholder">
-                            <div class="placeholder-icon">🌸</div>
-                            <p>图片2: 春日繁花</p>
-                            <p style="font-size: 12px; margin-top: 10px;">替换为你的图片URL</p>
-                        </div>
-                    </div>
-                    
-                    <div class="image-slide" data-index="3">
-                        <div class="image-placeholder">
-                            <div class="placeholder-icon">🌅</div>
-                            <p>图片3: 春日黄昏</p>
-                            <p style="font-size: 12px; margin-top: 10px;">替换为你的图片URL</p>
-                        </div>
-                    </div>
-                    
-                    <div class="image-slide" data-index="4">
-                        <div class="image-placeholder">
-                            <div class="placeholder-icon">🌿</div>
-                            <p>图片4: 春日绿意</p>
-                            <p style="font-size: 12px; margin-top: 10px;">替换为你的图片URL</p>
-                        </div>
-                    </div>
+            <!-- 投币区域 -->
+            <div class="coin-section">
+                <div class="coin-count">
+                    <span class="coin-icon">🪙</span>
+                    COINS: <span id="coinCount">0</span>
                 </div>
                 
-                <!-- 图片计数器 -->
-                <div class="image-counter">
-                    当前图片: <span class="counter-text" id="currentImg">1</span> / 
-                    <span class="counter-text" id="totalImg">4</span>
-                </div>
-                
-                <!-- 图片描述 -->
-                <div class="image-description" id="imageDesc">
-                    点击左边投币按钮，欣赏春日美景轮播
-                </div>
+                <!-- 投币按钮 -->
+                <button class="pixel-btn" id="coinBtn">
+                    INSERT COIN
+                </button>
+            </div>
+            
+            <!-- 像素装饰图案 -->
+            <div class="pixel-art" style="color: #E6F0FF">
+                <pre>
+  ██████████████
+ ██░░░░░░░░░░░░██
+██░░░░░░░░░░░░░░██
+██░░░░░░░░░░░░░░██
+██░░░░░░░░░░░░░░██
+ ██░░░░░░░░░░░░██
+  ██████████████
+                </pre>
+            </div>
+            
+            <!-- 底部信息 -->
+            <div class="pixel-footer">
+                PIXEL VENDOR 3000 | RETRO STYLE
             </div>
         </div>
         
-        <script>
-            // ========== 左边文本贩卖机功能 ==========
-            // 数据库文本数据
-            const pixelTextDatabase = [
-                "No.2316/0801/20<br>赭红色和荧光橙混合在一起、和番茄酱一样粘稠的暮光，据说是在傍晚时分不知道谁家窗户边上的一瓶胶水里得到的。<br>“心脏粘合剂。”有人讲了一句玩笑话，虽然是玩笑，但他真的已经盘算好如何使用它们了。<br>无论是破碎的心脏还是糖果...要来试一试它的黏性吗？",
-                "No.0007/0624/20<br>一瓶泛着奶酪黄、用蓝色光点点缀的暮光。除此之外，瓶中别无他物。“把那个时候的记忆全部都留在了这里。”它就像标本似的，光和光点凝固在那里，你怎么摇晃都不会有任何改变。所以这瓶暮光是夜灯的不二选择。<br>“是时候说晚安了。”这瓶暮光依旧在充当夜晚的太阳。",
-                "No.1725/0805/20<br>从瓶盖打出的鹅黄色的光点照在灰色的磨砂瓶底上，光斑组合成玫瑰的图案。细窄的瓶颈上绑着朱红色的缎带。它很适合当做礼物送人或放在书架上当做装饰品。黄色玫瑰常常让她想起那日的玫瑰花丛。<br>“如果它还在就好了。”她坐下来，把头埋进双膝里。",
-                "RETRO SUNSET: NO FILTERS NEEDED. PURE 8-BIT BEAUTY.",
-                "GAME OVER? NO, JUST ANOTHER DAY ENDING. PRESS CONTINUE.",
-                "THE CLOUDS ARE PIXELATED TODAY. LOW-RES BUT LOVELY.",
-                "NIGHT MODE ACTIVATED. STARS LOADING... PLEASE WAIT.",
-                "SECRET CODE FOUND: ENJOY THE TWILIGHT MOMENTS.",
-                "HIGH SCORE! YOU'VE EARNED A GOLDEN SUNSET.",
-                "BUFFERING SUNSET... 100% COMPLETE. ENJOY THE VIEW.",
-                "GLITCH IN THE MATRIX? NO, JUST A PERFECT EVENING.",
-                "YOU UNLOCKED THE 'TWILIGHT ACHIEVEMENT'. CONGRATS!"
-            ];
+        <!-- 右边：图片贩卖机 -->
+        <div class="image-vendor vendor-box">
+            <!-- 装饰边框 -->
+            <!-- 标题 -->
+            <h2 class="image-title">██████████</h2>
             
-            // 图片描述数据
-            const imageDescriptions = [
-                "春光灿烂 - 万物复苏的季节，阳光温暖大地",
-                "春日繁花 - 百花齐放，色彩斑斓的春日画卷",
-                "春日黄昏 - 夕阳余晖洒满大地，温暖而宁静",
-                "春日绿意 - 新叶吐绿，生机勃勃的春日景象"
-            ];
-            
-            // DOM元素
-            const displayText = document.getElementById('displayText');
-            const coinBtn = document.getElementById('coinBtn');
-            const coinCount = document.getElementById('coinCount');
-            
-            // 状态变量
-            let coins = 0;
-            let isVending = false;
-            
-            // 投币功能
-            coinBtn.addEventListener('click', function() {
-                if (isVending) return;
-                
-                // 投币
-                coins++;
-                coinCount.textContent = coins;
-                
-                // 如果已经有硬币，开始出货
-                if (coins > 0) {
-                    startVending();
-                }
-            });
-            
-            // 出货功能
-            function startVending() {
-                isVending = true;
-                
-                // 显示加载动画
-                displayText.innerHTML = `
-                    <div class="pixel-loading">
-                        <div class="loading-text">VENDING...</div>
-                        <div class="pixel-loader">
-                            <div class="pixel-dot"></div>
-                            <div class="pixel-dot"></div>
-                            <div class="pixel-dot"></div>
-                        </div>
-                    </div>
-                `;
-                
-                // 3秒后显示随机文本
-                setTimeout(() => {
-                    // 从数据库中随机选择一条文本
-                    const randomIndex = Math.floor(Math.random() * pixelTextDatabase.length);
-                    const randomText = pixelTextDatabase[randomIndex];
-                    
-                    // 显示文本
-                    displayText.innerHTML = randomText;
-                    
-                    // 消耗一个硬币
-                    coins--;
-                    coinCount.textContent = coins;
-                    
-                    // 重置状态
-                    isVending = false;
-                    
-                    // 如果还有硬币，显示提示
-                    if (coins > 0) {
-                        setTimeout(() => {
-                            displayText.innerHTML = `READY!<br>COINS LEFT: ${coins}<br>PRESS AGAIN`;
-                        }, 3000);
-                    }
-                }, 3000);
-            }
-            
-            // ========== 右边图片轮播功能 ==========
-            // 获取图片轮播元素
-            const slides = document.querySelectorAll('.image-slide');
-            const currentImgElement = document.getElementById('currentImg');
-            const totalImgElement = document.getElementById('totalImg');
-            const imageDescElement = document.getElementById('imageDesc');
-            let currentSlideIndex = 0;
-            let slideInterval;
-            
-            // 初始化图片轮播
-            function initImageSlider() {
-                // 设置总图片数
-                totalImgElement.textContent = slides.length;
-                
-                // 显示第一张图片
-                showSlide(0);
-                
-                // 启动自动轮播
-                startAutoSlide();
-                
-                // 点击图片区域手动切换
-                const imageDisplay = document.querySelector('.image-display');
-                if (imageDisplay) {
-                    imageDisplay.addEventListener('click', nextSlide);
-                }
-            }
-            
-            // 显示指定索引的图片
-            function showSlide(index) {
-                // 确保索引在有效范围内
-                if (index < 0) index = slides.length - 1;
-                if (index >= slides.length) index = 0;
-                
-                // 隐藏所有图片
-                slides.forEach(slide => {
-                    slide.classList.remove('active');
-                });
-                
-                // 显示当前图片
-                currentSlideIndex = index;
-                slides[currentSlideIndex].classList.add('active');
-                
-                // 更新计数器
-                currentImgElement.textContent = currentSlideIndex + 1;
-                
-                // 更新图片描述
-                if (imageDescElement && imageDescriptions[currentSlideIndex]) {
-                    imageDescElement.textContent = imageDescriptions[currentSlideIndex];
-                }
-            }
-            
-            // 下一张图片
-            function nextSlide() {
-                showSlide(currentSlideIndex + 1);
-                
-                // 重置自动轮播计时器
-                resetAutoSlide();
-            }
-            
-            // 上一张图片
-            function prevSlide() {
-                showSlide(currentSlideIndex - 1);
-                
-                // 重置自动轮播计时器
-                resetAutoSlide();
-            }
-            
-            // 启动自动轮播
-            function startAutoSlide() {
-                // 每5秒自动切换一次
-                slideInterval = setInterval(() => {
-                    nextSlide();
-                }, 5000);
-            }
-            
-            // 重置自动轮播
-            function resetAutoSlide() {
-                clearInterval(slideInterval);
-                startAutoSlide();
-            }
-            
-            // 键盘控制（可选）
-            document.addEventListener('keydown', function(event) {
-                if (event.key === 'ArrowLeft') {
-                    prevSlide();
-                } else if (event.key === 'ArrowRight') {
-                    nextSlide();
-                }
-            });
-            
-            // ========== 初始化 ==========
-            // 页面加载完成后初始化
-            document.addEventListener('DOMContentLoaded', function() {
-                // 初始化文本贩卖机
-                const initialIndex = Math.floor(Math.random() * pixelTextDatabase.length);
-                displayText.innerHTML = `${pixelTextDatabase[initialIndex]}<br><br>◌INSERT COIN TO START◌`;
-                
-                // 初始化图片轮播
-                initImageSlider();
-            });
-            
-            // ========== 如何添加自定义图片 ==========
-            /*
-            要添加自己的图片，请按照以下步骤操作：
-            
-            1. 在HTML中找到 .image-display 区域内的 .image-slide 元素
-            2. 将每个 .image-slide 中的 .image-placeholder 替换为你的图片
-            
-            例如，将：
-                <div class="image-placeholder">
-                    <div class="placeholder-icon">🖼️</div>
-                    <p>图片1: 春光灿烂</p>
+            <!-- 图片显示区域 -->
+            <div class="image-display">
+                <!-- 图片轮播 -->
+                <div class="image-slide active" data-index="1">
+                    <!-- 这里可以替换为你的图片URL -->
+                    <img src="images/index/DONUT.jpg" alt="1">
                 </div>
+                
+                <div class="image-slide" data-index="2">
+                    <div class="image-placeholder">
+                        <div class="placeholder-icon">🌸</div>
+                        <p>图片2: 春日繁花</p>
+                        <p style="font-size: 12px; margin-top: 10px;">替换为你的图片URL</p>
+                    </div>
+                </div>
+                
+                <div class="image-slide" data-index="3">
+                    <div class="image-placeholder">
+                        <div class="placeholder-icon">🌅</div>
+                        <p>图片3: 春日黄昏</p>
+                        <p style="font-size: 12px; margin-top: 10px;">替换为你的图片URL</p>
+                    </div>
+                </div>
+                
+                <div class="image-slide" data-index="4">
+                    <div class="image-placeholder">
+                        <div class="placeholder-icon">🌿</div>
+                        <p>图片4: 春日绿意</p>
+                        <p style="font-size: 12px; margin-top: 10px;">替换为你的图片URL</p>
+                    </div>
+                </div>
+            </div>
             
-            替换为：
-                <img src="你的图片URL.jpg" alt="春光灿烂">
+            <!-- 图片计数器 -->
+            <div class="image-counter">
+                当前图片: <span class="counter-text" id="currentImg">1</span> / 
+                <span class="counter-text" id="totalImg">4</span>
+            </div>
             
-            3. 在 imageDescriptions 数组中添加对应的图片描述
-            4. 修改 totalImgElement 的初始值（如果需要增加图片数量）
-            */
-        </script>
-    </body>
-    </html>
+            <!-- 图片描述 -->
+            <div class="image-description" id="imageDesc">
+                点击左边投币按钮，欣赏春日美景轮播
+            </div>
+        </div>
+    </div>
     
     <script>
-        // 等待DOM加载完成
-        document.addEventListener('DOMContentLoaded', function() {
-            // 获取按钮和输出区域
-            const demoButton = document.getElementById('demoButton');
-            const outputArea = document.getElementById('outputArea');
+        // ========== 左边文本贩卖机功能 ==========
+        // 数据库文本数据
+        const pixelTextDatabase = [
+            "No.2316/0801/20<br>赭红色和荧光橙混合在一起、和番茄酱一样粘稠的暮光，据说是在傍晚时分不知道谁家窗户边上的一瓶胶水里得到的。<br>“心脏粘合剂。”有人讲了一句玩笑话，虽然是玩笑，但他真的已经盘算好如何使用它们了。<br>无论是破碎的心脏还是糖果……要来试一试它的黏性吗？",
+            "No.0007/0624/20<br>一瓶泛着奶酪黄、用蓝色光点点缀的暮光。除此之外，瓶中别无他物。“把那个时候的记忆全部都留在了这里。”它就像标本似的，光和光点凝固在那里，你怎么摇晃都不会有任何改变。所以这瓶暮光是夜灯的不二选择。<br>“是时候说晚安了。”这瓶暮光依旧在充当夜晚的太阳。",
+            "No.1725/0805/20<br>从瓶盖打出的鹅黄色的光点照在灰色的磨砂瓶底上，光斑组合成玫瑰的图案。细窄的瓶颈上绑着朱红色的缎带。它很适合当做礼物送人或放在书架上当做装饰品。黄色玫瑰常常让她想起那日的玫瑰花丛。<br>“如果它还在就好了。”她坐下来，把头埋进双膝里。",
+            "No.1853/0622/20<br>一瓶夹杂着柠檬水果糖和淡淡咖啡味的暮光，颜色是浅灰色拌了天空蓝，浑浊得不像光了。通过瓶壁传来一阵轻微的响动，像风。掀开瓶盖有潮湿的水汽扑面而来。“奇怪！不是说要下雨的吗？”有人这样说。<br>“这是我第一次看到这个……”小女孩搂着瓶子，小声地说。",
+            "No.1947/0622/20<br>一瓶夹杂着春卷香味的暮光，瓶子内壁贴着透明胶带，所以明明是夜晚，瓶子却发出惨白的光。胶带粘下了几个小字“never enough”。<br>“嗯，我想，它会吃人！”小何在教室的日光灯底下大嚼特嚼着春卷 ，信心满满地说。",
+            "No.1739/0623/20<br>瓶子里有积云在流动，瓶子的中心有一团白色的，微弱的暮光，灰蓝色的云被镶了奶金色的边。瓶身贴了一张贴纸，上面写着：\"我以為妳會喜歡我。\"<br>瓶上倒映出一双黑眼睛，下一秒瓶子被举起，快速下落和地面碰撞——一如当时谁和谁一起坠入爱河。",
+            "No.1820/0623/20<br>装着一节麦穗，还很新鲜。瓶子里是青黄色的雾霭，中央悬着橙黄色的光点，像太阳。这是当即装下的暮光，而事实上它已经被放了很久。保质期似乎很长。“从什么时候开始的呢？”有人轻声呢喃，满怀希冀地盯着瓶底的麦穗。实际上，连希望都是空的，因为麦穗早已停止生长。<br>“所以......还是算了吧！”瓶子被装进了黑口袋。它见不到太阳。",
+            "No.0016/0624/20<br>一瓶玫瑰红色的绚丽的暮光，在太阳坠入地平线的最后一刹那被装入瓶里，新鲜，毫无杂质。“我一直想跟你一起走这条路。”哑巴望着玫瑰色天空和远方一个不起眼的、发光的亮点，无声地说。<br>瓶盖被掀开，被揉碎嚼烂的字句掉了进去，搅浑了暮光。",
+            "No.0831/0624/20<br>一个装有几乎透明的稀薄的暮光的瓶子。它是什么颜色的？根本辨别不出。因为它是在经历一个（又或许是好多个）夜晚后才真正被封装在瓶子里的。<br>“冬天的事就该在冬天结束，你为什么要把它拖到三月的春天？”瓶子被塞进一只黑色皮手套里，一起在垃圾桶里安家。<br>“怎么又是这样，浪费钱。”有人小声嘟囔着。",
+            "No.0852/0628/20<br>一瓶\"昨晚\"的暮光。它被装在一个黑色玻璃瓶里，金黄色的、边缘泛着橘红的暮光伴随着点点绿色荧光在黑色瓶底闪烁，它们仿佛在黑色无边的海上随波荡漾。海中间有一个漆黑又朦胧的人影，一动不动，像一尊雕像。<br>\"■■■■，断了吧。\"<br>有回声在瓶中响起，但是模糊到只能听得到三个字。海水涨潮，淹没了逃生通道，绿色荧光和人影一起消失了。或许剩下的才是真正的暮光。",
+            "No.0737/0629/20<br>一个装在废弃的行李箱里的暮光，在一个雨天的清晨被装进玻璃瓶。<br>“我以为里面放着尸体……嗯，抛尸什么的。”这是一瓶肉色的暮光，光团边缘混入了薰衣草紫和松石绿。据说还有蜡油的香味，但由于瓶子再也打不开了，所以无从考证。<br>“唉！说真的，我原本想拿它当水杯的，谁知道它被封死了？”<br>时至今日，暮光依旧是瓶子里的囚徒。",
+            "No.0040/0805/20<br>一瓶装满蓝绿色粉末的\"暮光\"。没错，这一次暮光变成了粉末，由余晖里海滩上的一只完整的白贝壳加入海草和铃兰花磨制而成。它色泽艳丽，会发光，有人笑称它为荧光粉末。这一次没有台词，但你能听到瓶子里有海浪在低语。瓶底贴了一个圆形标签，上面用黑色马克笔写着\"Summer\"——这是夏天留下的唯一的纪念物。",
+            "No.0813/0807/20<br>呈光团状的悬浮在瓶子正中央的玫瑰金色的暮光，是从花园的铜栏杆上收集到的，那是暮光吻过的痕迹。你能从光团里看到什么？摔碎的镜子碎片，和旧照片的一角。本来它们应该留在瓶底，但是它们被提前倒掉了。<br>“我想要重新开始。”"
+        ];
+        
+        // 图片描述数据
+        const imageDescriptions = [
+            "春光灿烂 - 万物复苏的季节，阳光温暖大地",
+            "春日繁花 - 百花齐放，色彩斑斓的春日画卷",
+            "春日黄昏 - 夕阳余晖洒满大地，温暖而宁静",
+            "春日绿意 - 新叶吐绿，生机勃勃的春日景象"
+        ];
+        
+        // DOM元素
+        const displayText = document.getElementById('displayText');
+        const coinBtn = document.getElementById('coinBtn');
+        const coinCount = document.getElementById('coinCount');
+        
+        // 状态变量
+        let coins = 0;
+        let isVending = false;
+        
+        // 投币功能
+        coinBtn.addEventListener('click', function() {
+            if (isVending) return;
             
-            // 初始化计数器
-            let clickCount = 0;
+            // 投币
+            coins++;
+            coinCount.textContent = coins;
             
-            // 更新输出区域的函数
-            function updateOutput(message, type = 'info') {
-                const now = new Date();
-                const timeString = now.toLocaleTimeString();
-                
-                // 创建消息元素
-                const messageElement = document.createElement('div');
-                messageElement.className = `message ${type}`;
-                messageElement.innerHTML = `
-                    <strong>${timeString}</strong>: ${message}
-                `;
-                
-                // 添加到输出区域
-                outputArea.appendChild(messageElement);
-                
-                // 保持滚动到底部
-                outputArea.scrollTop = outputArea.scrollHeight;
+            // 如果已经有硬币，开始出货
+            if (coins > 0) {
+                startVending();
             }
-            
-            // 按钮点击事件处理
-            demoButton.addEventListener('click', function() {
-                clickCount++;
-                
-                // 随机颜色生成
-                const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
-                
-                // 改变按钮颜色
-                demoButton.style.backgroundColor = randomColor;
-                
-                // 更新输出
-                updateOutput(`按钮被点击了 ${clickCount} 次。按钮颜色已更改为: ${randomColor}`, 'click');
-                
-                // 如果点击次数是5的倍数，显示特殊消息
-                if (clickCount % 5 === 0) {
-                    updateOutput(`恭喜！您已经点击了 ${clickCount} 次！`, 'special');
-                }
-            });
-            
-            // 页面加载时显示欢迎消息
-            updateOutput('页面加载完成！请点击"点击我试试"按钮开始交互。', 'info');
-            
-            // 添加键盘快捷键
-            document.addEventListener('keydown', function(event) {
-                // 按空格键也触发按钮点击
-                if (event.code === 'Space' && event.target === document.body) {
-                    event.preventDefault();
-                    demoButton.click();
-                }
-                
-                // Ctrl+Enter 运行代码
-                if (event.ctrlKey && event.code === 'Enter') {
-                    event.preventDefault();
-                    document.getElementById('runBtn').click();
-                }
-            });
-            
-            // 显示编辑器加载完成
-            console.log('JavaScript代码已加载！');
         });
+        
+        // 出货功能
+        function startVending() {
+            isVending = true;
+            
+            // 显示加载动画
+            displayText.innerHTML = `
+                <div class="pixel-loading">
+                    <div class="loading-text">VENDING...</div>
+                    <div class="pixel-loader">
+                        <div class="pixel-dot"></div>
+                        <div class="pixel-dot"></div>
+                        <div class="pixel-dot"></div>
+                    </div>
+                </div>
+            `;
+            
+            // 3秒后显示随机文本
+            setTimeout(() => {
+                // 从数据库中随机选择一条文本
+                const randomIndex = Math.floor(Math.random() * pixelTextDatabase.length);
+                const randomText = pixelTextDatabase[randomIndex];
+                
+                // 显示文本
+                displayText.innerHTML = randomText;
+                
+                // 消耗一个硬币
+                coins--;
+                coinCount.textContent = coins;
+                
+                // 重置状态
+                isVending = false;
+                
+                // 如果还有硬币，显示提示
+                if (coins > 0) {
+                    setTimeout(() => {
+                        displayText.innerHTML = `READY!<br>COINS LEFT: ${coins}<br>PRESS AGAIN`;
+                    }, 3000);
+                }
+            }, 3000);
+        }
+        
+        // ========== 右边图片轮播功能 ==========
+        // 获取图片轮播元素
+        const slides = document.querySelectorAll('.image-slide');
+        const currentImgElement = document.getElementById('currentImg');
+        const totalImgElement = document.getElementById('totalImg');
+        const imageDescElement = document.getElementById('imageDesc');
+        let currentSlideIndex = 0;
+        let slideInterval;
+        
+        // 初始化图片轮播
+        function initImageSlider() {
+            // 设置总图片数
+            totalImgElement.textContent = slides.length;
+            
+            // 显示第一张图片
+            showSlide(0);
+            
+            // 启动自动轮播
+            startAutoSlide();
+            
+            // 点击图片区域手动切换
+            const imageDisplay = document.querySelector('.image-display');
+            if (imageDisplay) {
+                imageDisplay.addEventListener('click', nextSlide);
+            }
+        }
+        
+        // 显示指定索引的图片
+        function showSlide(index) {
+            // 确保索引在有效范围内
+            if (index < 0) index = slides.length - 1;
+            if (index >= slides.length) index = 0;
+            
+            // 隐藏所有图片
+            slides.forEach(slide => {
+                slide.classList.remove('active');
+            });
+            
+            // 显示当前图片
+            currentSlideIndex = index;
+            slides[currentSlideIndex].classList.add('active');
+            
+            // 更新计数器
+            currentImgElement.textContent = currentSlideIndex + 1;
+            
+            // 更新图片描述
+            if (imageDescElement && imageDescriptions[currentSlideIndex]) {
+                imageDescElement.textContent = imageDescriptions[currentSlideIndex];
+            }
+        }
+        
+        // 下一张图片
+        function nextSlide() {
+            showSlide(currentSlideIndex + 1);
+            
+            // 重置自动轮播计时器
+            resetAutoSlide();
+        }
+        
+        // 上一张图片
+        function prevSlide() {
+            showSlide(currentSlideIndex - 1);
+            
+            // 重置自动轮播计时器
+            resetAutoSlide();
+        }
+        
+        // 启动自动轮播
+        function startAutoSlide() {
+            // 每5秒自动切换一次
+            slideInterval = setInterval(() => {
+                nextSlide();
+            }, 5000);
+        }
+        
+        // 重置自动轮播
+        function resetAutoSlide() {
+            clearInterval(slideInterval);
+            startAutoSlide();
+        }
+        
+        // 键盘控制（可选）
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft') {
+                prevSlide();
+            } else if (event.key === 'ArrowRight') {
+                nextSlide();
+            }
+        });
+        
+        // ========== 初始化 ==========
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化文本贩卖机
+            const initialIndex = Math.floor(Math.random() * pixelTextDatabase.length);
+            displayText.innerHTML = `${pixelTextDatabase[initialIndex]}<br><br>◌INSERT COIN TO START◌`;
+            
+            // 初始化图片轮播
+            initImageSlider();
+        });
+        
+        // ========== 如何添加自定义图片 ==========
+        /*
+        要添加自己的图片，请按照以下步骤操作：
+        
+        1. 在HTML中找到 .image-display 区域内的 .image-slide 元素
+        2. 将每个 .image-slide 中的 .image-placeholder 替换为你的图片
+        
+        例如，将：
+            <div class="image-placeholder">
+                <div class="placeholder-icon">🖼️</div>
+                <p>图片1: 春光灿烂</p>
+            </div>
+        
+        替换为：
+            <img src="你的图片URL.jpg" alt="春光灿烂">
+        
+        3. 在 imageDescriptions 数组中添加对应的图片描述
+        4. 修改 totalImgElement 的初始值（如果需要增加图片数量）
+        */
     </script>
 </body>
 </html>

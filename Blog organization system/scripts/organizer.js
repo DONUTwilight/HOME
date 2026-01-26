@@ -817,7 +817,7 @@ class BlogOrganizer {
     </div>
     
     <div class="blog-post" style="text-align: center; color: #888; font-size: 12px;">
-        使用像素博客整理器生成
+        好想吃甜甜圈
     </div>
     
     <script>

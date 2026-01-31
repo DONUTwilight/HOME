@@ -11,7 +11,9 @@
     <nav class="navbar">
         <div class="site-title">HOME</div>
         <div class="nav-links">
-            <a href="index.html">About me</a>
+            <a href="#Recently">Recently</a>
+            <a href="#Contact">Contact</a>
+            <a href="#Contents">Contents</a>
         </div>
     </nav>
 
@@ -20,18 +22,17 @@
         <!-- 【需要替换】请将"avatar-placeholder.jpg"替换为您的头像图片 -->
         <img src="images/index/DONUT.jpg" alt="头像" class="avatar">
 
-        <h1>About me</h1>
-        
-        <!-- 【需要编辑】请修改下面的简介内容 -->
-        <p style="text-align: center;">暮流年/DONUTwilight 随意称呼</p>
+        <h1>DONUTwilight</h1>
+        <p style="text-align: center;">我也叫暮流年，随意称呼</p>
         <p style="text-align: center;">20↑ 中文/ENG/ESP 目前主要在ff14/bleach/oc</p>
+        <p style="text-align: center;">技术力不高，我写我想写的，你看你想看的</p>
         <p style="text-align: center;">其实本体不是甜甜圈，是苦苦方</p>
 	</div>
 </div>
 	
 <div class="container">
-	<div class="card">
-        <h2>🕯联络我🕯</h2>
+	<div id="Contact" class="card">
+        <h2>Contact</h2>
         <h3>私联/邮件</h3>
 		<p>donutwilight@foxmail.com</p>
         <h3>公开平台</h3>
@@ -58,9 +59,9 @@
         
 
 
-	<div class="container">
+	<div id="Contents" class="container">
 		<div class="card">
-		<h2>Content</h2>
+		<h2>Contents</h2>
 
 			<h3>产出</h3>
 			<div class="nav-links" style="display: flex; flex-direction: column; gap: 10px;">
@@ -70,13 +71,10 @@
 			<a href="index-ff14.html"  style="color: #ffffff">●FF14同人/oc</a>		
 			<a href="index-mcyt.html"  style="color: #ffffff">●mcyt同人</a>
 			<a href="index-othersoc.html"  style="color: #ffffff">●未归类</a>
+			<a href="#暮光贩卖机"  style="color: #ffffff">🌆暮光贩卖机</a>
+
 			</div>
 
-			<h3>记录</h3>
-			<div class="nav-links" style="display: flex; flex-direction: column; gap: 10px;">
-			<a href="#暮光贩卖机"  style="color: #ffffff">🌆暮光贩卖机</a>
-			<a href="index-you.html"  style="color: #ffffff">🌇叽里咕噜的说什么呢这家伙</a>
-			</div>
 
 			<h3>常用工具</h3>
 			<div class="nav-links" style="display: flex; flex-direction: column; gap: 10px;">
@@ -91,13 +89,76 @@
 
 
 
+<div id= "Recently" class="container">
+    <div class="card">
+        <h2>Recently</h2>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-dot">
+                    <div class="dot-icon">👄</div>
+                </div>
+                <div class="timeline-content">
+                    <div class="timeline-header">
+                        <h3>最近的我</h3>
+                        <span class="timeline-date">2026/01/29</span>
+                    </div>
+                    <p class="timeline-desc">叽里咕噜的在说些什么呢这家伙</p>
+                    <a href="index-you.html" class="timeline-link">查看详情 →</a>
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-dot">
+                    <div class="dot-icon">👁️</div>
+                </div>
+                <div class="timeline-content">
+                    <div class="timeline-header">
+                        <h3>最近在看</h3>
+                        <span class="timeline-date">2026/01/30</span>
+                    </div>
+                    <p class="timeline-desc">《银河系漫游指南》 - 道格拉斯·亚当斯的科幻喜剧经典，幽默而哲学地探讨宇宙与存在</p>
+                    <div class="timeline-tags">
+                        <span class="tag">科幻喜剧</span>
+                        <span class="tag">哲学</span>
+                        <span class="tag">经典</span>
+                    </div>
+                    <a href="#" class="timeline-link">查看书单 →</a>
+                </div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="timeline-dot">
+                    <div class="dot-icon">🎮</div>
+                </div>
+                <div class="timeline-content">
+                    <div class="timeline-header">
+                        <h3>最近在玩</h3>
+                        <span class="timeline-date">每天</span>
+                    </div>
+                    <p class="timeline-desc">《星际拓荒》 - 探索太阳系解谜游戏，每22分钟时间循环的太空冒险</p>
+                    <div class="timeline-tags">
+                        <span class="tag">解谜</span>
+                        <span class="tag">太空</span>
+                        <span class="tag">时间循环</span>
+                    </div>
+                    <a href="#" class="timeline-link">更多游戏 →</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
         
  <div class="container">
 	<div class="card">
 		<h2>你知道吗其实我这辈子吃过的甜甜圈屈指可数</h2>
 		   
-			<ul class="platform-list" style="display: flex; gap: 20px; flex-wrap: wrap; padding: 0; margin: 0 0 var(--space-md) 0; list-style: none;">
-				<li class="platform-item no-icon" style="flex: 1; min-width: 300px; box-shadow: none; transform: none; transition: none;">
+
 					<details>
 						<summary>🌻🐥</summary>
 						<div class="intro-content">
@@ -109,8 +170,7 @@
 							<p>哈哈，希望我能持续使用下去，希望未来我有能力给这个破烂个站增加更多的功能。</p>
 						</div>
 					</details>
-				</li>
-				<li class="platform-item no-icon" style="flex: 1; min-width: 300px; box-shadow: none; transform: none; transition: none;">
+
 					<details>
 						<summary>✉</summary>
 						<div class="intro-content">
@@ -120,273 +180,8 @@
 						</div>
 		 
 							
-							<!-- 简约留言板 - 直接复制到任何位置 -->
-						<div id="mini-msg-board">
-							<style>
-							#mini-msg-board {
-							  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', system-ui, sans-serif;
-							  max-width: 600px;
-							  margin: 20px auto;
-							  padding: 18px;
-							  background: #3A4268;
-							  backdrop-filter: blur(10px);
-							  -webkit-backdrop-filter: blur(10px);
-							  border-radius: 12px;
-							  border: 1px solid rgba(0, 0, 0, 0.08);
-							  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
-							  position: relative;
-							  overflow: hidden;
-							}
-							
-							#mini-msg-board:before {
-							  content: '';
-							  position: absolute;
-							  top: 0;
-							  left: 0;
-							  right: 0;
-							  height: 2px;
-							  background: linear-gradient(90deg, 
-								rgba(120, 120, 120, 0.1) 0%, 
-								rgba(80, 80, 80, 0.3) 50%, 
-								rgba(120, 120, 120, 0.1) 100%);
-							}
-							
-							h4 {
-							  margin-top: 0;
-							  margin-bottom: 16px;
-							  font-size: 1.2rem;
-							  color: #E6F0FF;
-							  font-weight: 600;
-							  display: flex;
-							  align-items: center;
-							  gap: 8px;
-							}
-							
-							h4:before {
-							  content: "🍞";
-							  font-size: 1.1rem;
-							  opacity: 0.7;
-							}
-							
-							.msg-textarea {
-							  width: 100%;
-							  height: 70px;
-							  padding: 12px 14px;
-							  border: 1px solid rgba(0, 0, 0, 0.12);
-							  border-radius: 8px;
-							  margin-bottom: 12px;
-							  resize: vertical;
-							  box-sizing: border-box;
-							  font-family: inherit;
-							  font-size: 14px;
-							  line-height: 1.4;
-							  color: #222;
-							  background-color: rgba(255, 255, 255, 0.9);
-							  transition: all 0.2s ease;
-							  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04);
-							}
-							
-							.msg-textarea:focus {
-							  outline: none;
-							  border-color: rgba(80, 80, 80, 0.4);
-							  box-shadow: 0 0 0 2px rgba(100, 100, 100, 0.1), inset 0 1px 3px rgba(0, 0, 0, 0.04);
-							  background-color: #E6F0FF;
-							}
-							
-							.msg-textarea::placeholder {
-							  color: rgba(100, 100, 100, 0.6);
-							  font-style: italic;
-							}
-							
-							.msg-btn {
-							  background: linear-gradient(to bottom, rgba(80, 80, 80, 0.9), rgba(60, 60, 60, 0.9));
-							  color: white;
-							  border: none;
-							  padding: 10px 24px;
-							  border-radius: 8px;
-							  cursor: pointer;
-							  font-weight: 500;
-							  font-size: 14px;
-							  transition: all 0.2s ease;
-							  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-							  position: relative;
-							  overflow: hidden;
-							  letter-spacing: 0.3px;
-							}
-							
-							.msg-btn:hover {
-							  background: linear-gradient(to bottom, rgba(60, 60, 60, 0.95), rgba(40, 40, 40, 0.95));
-							  transform: translateY(-1px);
-							  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
-							}
-							
-							.msg-btn:active {
-							  transform: translateY(0);
-							  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-							}
-							
-							.msg-btn:after {
-							  content: '';
-							  position: absolute;
-							  top: 0;
-							  left: -100%;
-							  width: 100%;
-							  height: 100%;
-							  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-							  transition: left 0.6s ease;
-							}
-							
-							.msg-btn:hover:after {
-							  left: 100%;
-							}
-							
-							.msg-list {
-							  margin-top: 20px;
-							  max-height: 350px;
-							  overflow-y: auto;
-							  padding-right: 6px;
-							}
-							
-							/* 自定义滚动条 */
-							.msg-list::-webkit-scrollbar {
-							  width: 4px;
-							}
-							
-							.msg-list::-webkit-scrollbar-track {
-							  background: rgba(0, 0, 0, 0.03);
-							  border-radius: 8px;
-							}
-							
-							.msg-list::-webkit-scrollbar-thumb {
-							  background: rgba(0, 0, 0, 0.15);
-							  border-radius: 8px;
-							}
-							
-							.msg-list::-webkit-scrollbar-thumb:hover {
-							  background: rgba(0, 0, 0, 0.25);
-							}
-							
-							.msg-item {
-							  background: rgba(255, 255, 255, 0.7);
-							  padding: 14px;
-							  margin: 10px 0;
-							  border-radius: 8px;
-							  border-left: 3px solid rgba(100, 100, 100, 0.3);
-							  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-							  transition: all 0.15s ease;
-							  position: relative;
-							  overflow: hidden;
-							  backdrop-filter: blur(5px);
-							  -webkit-backdrop-filter: blur(5px);
-							}
-							
-							.msg-item:hover {
-							  transform: translateY(-1px);
-							  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
-							  background: rgba(255, 255, 255, 0.8);
-							}
-							
-							.msg-item:before {
-							  content: '';
-							  position: absolute;
-							  top: 0;
-							  left: 0;
-							  width: 3px;
-							  height: 100%;
-							  background: linear-gradient(to bottom, rgba(120, 120, 120, 0.4), rgba(180, 180, 180, 0.2));
-							}
-							
-							.msg-item > div:first-child {
-							  color: #222;
-							  line-height: 1.5;
-							  margin-bottom: 6px;
-							  font-size: 14px;
-							}
-							
-							.msg-time {
-							  font-size: 12px;
-							  color: rgba(80, 80, 80, 0.7);
-							  margin-top: 6px;
-							  display: flex;
-							  align-items: center;
-							  gap: 5px;
-							}
-							
-							.msg-time:before {
-							  content: "⏱";
-							  font-size: 11px;
-							  opacity: 0.6;
-							}
-							
-							.msg-empty {
-							  text-align: center;
-							  color: rgba(100, 100, 100, 0.6);
-							  padding: 30px 15px;
-							  font-style: italic;
-							  background: rgba(255, 255, 255, 0.5);
-							  border-radius: 8px;
-							  border: 1px dashed rgba(0, 0, 0, 0.1);
-							  font-size: 14px;
-							  backdrop-filter: blur(5px);
-							  -webkit-backdrop-filter: blur(5px);
-							}
-							
-							.msg-empty:before {
-							  content: "🍩";
-							  font-size: 1.3rem;
-							  display: block;
-							  margin-bottom: 10px;
-							  opacity: 0.5;
-							}
-							
-							/* 响应式调整 */
-							@media (max-width: 640px) {
-							  #mini-msg-board {
-								margin: 12px;
-								padding: 14px;
-								border-radius: 10px;
-							  }
-							  
-							  h4 {
-								font-size: 1.1rem;
-								margin-bottom: 14px;
-							  }
-							  
-							  .msg-textarea {
-								height: 65px;
-								padding: 10px 12px;
-								font-size: 13.5px;
-							  }
-							  
-							  .msg-btn {
-								width: 100%;
-								padding: 9px 20px;
-							  }
-							  
-							  .msg-item {
-								padding: 12px;
-							  }
-							}
-							
-							/* 添加微妙的装饰元素 */
-							#mini-msg-board:after {
-							  content: '· · ·';
-							  position: absolute;
-							  bottom: 8px;
-							  right: 12px;
-							  font-size: 0.9rem;
-							  color: rgba(0, 0, 0, 0.1);
-							  letter-spacing: 2px;
-							  pointer-events: none;
-							}
-							
-							/* 紧凑型标题下划线 */
-							h4 {
-							  padding-bottom: 8px;
-							  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-							}
-						  </style>
-											  
+							<!-- 简约留言板 -->
+						<div id="mini-msg-board">											  
 							<h4>面包店</h4>
 							<textarea class="msg-textarea" placeholder="什么样的人才会对着一只甜甜圈自言自语？" maxlength="200"></textarea>
 							<button class="msg-btn" onclick="sendMsg()">咬一口甜甜圈</button>
@@ -477,13 +272,12 @@
 							
 							// 初始化
 							setTimeout(loadMsgs, 100);
-						  </script>
+							</script>
 									
 						</div>
-				</div>
-				</details>					
-            </li>
-			</ul>
+	</div>
+					</details>					
+
 	</div>
 
 

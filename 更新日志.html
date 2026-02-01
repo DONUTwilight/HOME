@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>导出的博客 - 2026/1/10</title>
+    <title>导出的博客 - 2026/2/1</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -11,10 +11,68 @@
             background: #fafafa; 
             color: #333; 
             line-height: 1.6; 
-            padding: 20px;
+            padding-top: 80px; /* 为固定搜索框留出空间 */
             max-width: 800px;
             margin: 0 auto;
         }
+        
+        /* 固定搜索框样式 */
+        .sticky-search-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: white;
+            border-bottom: 2px solid #e0e0e0;
+            padding: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .sticky-search-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .sticky-search-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f9f9f9;
+        }
+        
+        .sticky-search-input:focus {
+            outline: none;
+            border-color: #666;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .sticky-search-stats {
+            font-size: 14px;
+            color: #666;
+            min-width: 120px;
+            text-align: center;
+        }
+        
+        .sticky-search-stats .highlight {
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .sticky-search-stats .total {
+            color: #7f8c8d;
+            font-size: 13px;
+        }
+        
         .header { 
             text-align: center; 
             margin-bottom: 30px; 
@@ -30,21 +88,7 @@
             font-size: 12px; 
             color: #888; 
         }
-        .search-box {
-            margin: 20px 0;
-            padding: 15px;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .search-box input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 14px;
-        }
+        
         .blog-post { 
             background: white; 
             border: 1px solid #ddd; 
@@ -52,7 +96,22 @@
             margin-bottom: 20px; 
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
         }
+        
+        .blog-post.hidden {
+            display: none;
+        }
+        
+        .blog-post:not(.hidden) {
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
         .post-header { 
             display: flex; 
             justify-content: space-between; 
@@ -88,98 +147,269 @@
             border: 1px solid #ddd;
             border-radius: 4px;
         }
-        .stats {
+        
+        .no-results {
             text-align: center;
-            margin: 10px 0;
-            color: #666;
-            font-size: 13px;
+            padding: 40px 20px;
+            color: #7f8c8d;
+            font-size: 16px;
         }
+        
+        .no-results .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        
+        .match-highlight {
+            background-color: #fffacd;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+        
         @media (max-width: 600px) {
-            body { padding: 10px; }
+            body { 
+                padding: 80px 10px 10px; 
+            }
+            
+            .sticky-search-wrapper {
+                flex-direction: column;
+                gap: 10px;
+                padding: 10px;
+            }
+            
+            .sticky-search-input {
+                width: 100%;
+            }
+            
+            .sticky-search-stats {
+                width: 100%;
+                text-align: center;
+            }
+            
             .blog-post { padding: 15px; }
             .post-header { flex-direction: column; gap: 5px; }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>📝 博客存档</h1>
-        <div class="header-info">
-            导出时间：2026/1/10 21:22:15 | 
-            共 2 条博客
+    <!-- 固定搜索框 -->
+    <div class="sticky-search-container">
+        <div class="sticky-search-wrapper">
+            <input type="text" class="sticky-search-input" id="stickySearchInput" 
+                   placeholder="搜索博客内容或标签... (按时间倒序排列)">
+            <div class="sticky-search-stats">
+                <span id="visibleCount" class="highlight">4</span> / 
+                <span id="totalCount" class="total">4</span> 篇
+            </div>
         </div>
     </div>
     
-    <div class="search-box">
-        <input type="text" id="searchInput" placeholder="搜索博客内容或标签...">
-        <div class="stats">
-            显示 <span id="resultCount">2</span> 条结果
+    <div class="header">
+        <h1>📝 博客存档</h1>
+        <div class="header-info">
+            导出时间：2026/2/1 18:15:03 | 
+            按时间从新到旧排列 | 
+            共 4 条博客
         </div>
     </div>
     
     <div id="blogContainer">
         
-                <div class="blog-post" data-id="1767938095039">
-                    <div class="post-header">
-                        <small>2026/1/10 21:21</small>
-                        <small>#5039</small>
+            <div class="blog-post" data-id="1769940866667" 
+                 data-content="尝试修复移动端页面不居中、横向滚动的问题。
+添加recently板块，用来放更私人的、可公开的记录。"
+                 data-tags="更新日志">
+                <div class="post-header">
+                    <small>2026/2/1 10:14</small>
+                    <small>#6667</small>
+                </div>
+                <div class="post-content">尝试修复移动端页面不居中、横向滚动的问题。
+添加recently板块，用来放更私人的、可公开的记录。</div>
+                
+                
+                    <div class="tags">
+                        <span class="tag">更新日志</span>
                     </div>
-                    <div class="post-content">更新博客编辑器的部分细节。
+                
+            </div>
+            <div class="blog-post" data-id="1768963313511" 
+                 data-content="增加一个录入长篇文章的编辑器，支持富文本编辑，功能不一定全但是应该可以满足我自己的需求……导出部分只做了单篇导出，并没有导入功能，所以要记得随时导出存档。"
+                 data-tags="更新日志">
+                <div class="post-header">
+                    <small>2026/1/21 10:41</small>
+                    <small>#3511</small>
+                </div>
+                <div class="post-content">增加一个录入长篇文章的编辑器，支持富文本编辑，功能不一定全但是应该可以满足我自己的需求……导出部分只做了单篇导出，并没有导入功能，所以要记得随时导出存档。</div>
+                
+                
+                    <div class="tags">
+                        <span class="tag">更新日志</span>
+                    </div>
+                
+            </div>
+            <div class="blog-post" data-id="1767938095039" 
+                 data-content="更新博客编辑器的部分细节。
+更新主页部分样式，尤其是链接罗列的方式。决定还是多注重文字本身！"
+                 data-tags="更新日志">
+                <div class="post-header">
+                    <small>2026/1/10 21:21</small>
+                    <small>#5039</small>
+                </div>
+                <div class="post-content">更新博客编辑器的部分细节。
 更新主页部分样式，尤其是链接罗列的方式。决定还是多注重文字本身！</div>
-                    
-                    
-                        <div class="tags">
-                            <span class="tag">更新日志</span>
-                        </div>
-                    
-                </div>
-                <div class="blog-post" data-id="1767937564764">
-                    <div class="post-header">
-                        <small>2026/1/8 13:40</small>
-                        <small>#4764</small>
+                
+                
+                    <div class="tags">
+                        <span class="tag">更新日志</span>
                     </div>
-                    <div class="post-content">更新了合并博客数据的功能。有点心虚，因为自己并没有出什么力只是把要求告诉给ai而已哈哈。。。但管他呢我觉得能用就行！</div>
-                    
-                    
-                        <div class="tags">
-                            <span class="tag">更新日志</span>
-                        </div>
-                    
+                
+            </div>
+            <div class="blog-post" data-id="1767937564764" 
+                 data-content="更新了合并博客数据的功能。有点心虚，因为自己并没有出什么力只是把要求告诉给ai而已哈哈。。。但管他呢我觉得能用就行！"
+                 data-tags="更新日志">
+                <div class="post-header">
+                    <small>2026/1/8 13:40</small>
+                    <small>#4764</small>
                 </div>
+                <div class="post-content">更新了合并博客数据的功能。有点心虚，因为自己并没有出什么力只是把要求告诉给ai而已哈哈。。。但管他呢我觉得能用就行！</div>
+                
+                
+                    <div class="tags">
+                        <span class="tag">更新日志</span>
+                    </div>
+                
+            </div>
     </div>
     
-    <div class="blog-post" style="text-align: center; color: #888; font-size: 12px;">
-        好想吃甜甜圈
+    <div id="noResults" class="no-results" style="display: none;">
+        <div class="icon">🔍</div>
+        <div>没有找到匹配的博客</div>
+        <div style="font-size: 14px; margin-top: 10px;">尝试其他关键词或查看全部内容</div>
+    </div>
+    
+    <div class="blog-post" style="text-align: center; color: #888; font-size: 12px; margin-top: 40px;">
+        🍩 好想吃甜甜圈
     </div>
     
     <script>
-        const posts = document.querySelectorAll('.blog-post');
-        const searchInput = document.getElementById('searchInput');
-        const resultCount = document.getElementById('resultCount');
+        // 获取所有博客文章
+        const allPosts = Array.from(document.querySelectorAll('.blog-post'));
+        const totalPosts = allPosts.length;
+        const searchInput = document.getElementById('stickySearchInput');
+        const visibleCountEl = document.getElementById('visibleCount');
+        const totalCountEl = document.getElementById('totalCount');
+        const blogContainer = document.getElementById('blogContainer');
+        const noResultsEl = document.getElementById('noResults');
         
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
+        // 更新统计信息
+        function updateStats(visibleCount) {
+            visibleCountEl.textContent = visibleCount;
+            
+            if (visibleCount === 0) {
+                noResultsEl.style.display = 'block';
+            } else {
+                noResultsEl.style.display = 'none';
+            }
+        }
+        
+        // 高亮匹配文本
+        function highlightText(element, searchTerm) {
+            const text = element.textContent;
+            const regex = new RegExp('(' + searchTerm + ')', 'gi');
+            
+            element.innerHTML = text.replace(regex, '<span class="match-highlight">$1</span>');
+        }
+        
+        // 清除高亮
+        function clearHighlight(element) {
+            const text = element.textContent;
+            element.innerHTML = text;
+        }
+        
+        // 搜索功能
+        function performSearch() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
             let visibleCount = 0;
             
-            posts.forEach(post => {
-                const content = post.textContent.toLowerCase();
-                const tags = post.querySelectorAll('.tag');
-                const postTags = Array.from(tags).map(tag => tag.textContent.toLowerCase());
+            if (!searchTerm) {
+                // 显示所有文章
+                allPosts.forEach(post => {
+                    post.classList.remove('hidden');
+                    const contentEl = post.querySelector('.post-content');
+                    if (contentEl) clearHighlight(contentEl);
+                });
+                updateStats(totalPosts);
+                return;
+            }
+            
+            allPosts.forEach(post => {
+                const content = post.getAttribute('data-content') || '';
+                const tags = post.getAttribute('data-tags') || '';
+                const contentEl = post.querySelector('.post-content');
                 
-                const matchesSearch = !searchTerm || 
-                    content.includes(searchTerm) || 
-                    postTags.some(tag => tag.includes(searchTerm));
+                // 检查是否匹配
+                const matches = content.includes(searchTerm) || tags.includes(searchTerm);
                 
-                if (matchesSearch) {
-                    post.style.display = 'block';
+                if (matches) {
+                    post.classList.remove('hidden');
                     visibleCount++;
+                    
+                    // 高亮匹配的文本
+                    if (contentEl && content.includes(searchTerm)) {
+                        highlightText(contentEl, searchTerm);
+                    } else if (contentEl) {
+                        clearHighlight(contentEl);
+                    }
                 } else {
-                    post.style.display = 'none';
+                    post.classList.add('hidden');
+                    if (contentEl) clearHighlight(contentEl);
                 }
             });
             
-            resultCount.textContent = visibleCount;
+            updateStats(visibleCount);
+        }
+        
+        // 事件监听
+        searchInput.addEventListener('input', performSearch);
+        
+        // 初始显示所有文章
+        updateStats(totalPosts);
+        
+        // 添加滚动时搜索框的微交互效果
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const searchInput = document.getElementById('stickySearchInput');
+            
+            if (scrollTop > 10) {
+                searchInput.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                searchInput.style.transform = 'translateY(-1px)';
+            } else {
+                searchInput.style.boxShadow = 'none';
+                searchInput.style.transform = 'translateY(0)';
+            }
         });
+        
+        // 添加键盘快捷键
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                searchInput.value = '';
+                performSearch();
+                searchInput.blur();
+            }
+            
+            // Ctrl/Cmd + F 聚焦搜索框
+            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                e.preventDefault();
+                searchInput.focus();
+                searchInput.select();
+            }
+        });
+        
+        // 页面加载后聚焦搜索框（可选）
+        setTimeout(() => {
+            searchInput.focus();
+        }, 500);
     </script>
 </body>
 </html>

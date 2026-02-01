@@ -7,19 +7,35 @@
     <!-- 【重要】确保每个HTML文件都正确链接到style.css -->
     <link rel="stylesheet" href="style.css">
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <style>
-/* 手机整体缩放方案 */
+/* 手机整体缩放并居中方案 */
 @media only screen and (max-width: 768px) {
+    html, body {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow-x: hidden !important;
+    }
+    
     body {
-        transform: scale(0.9);
-        transform-origin: top center;
-        width: 100vw;
-        overflow-x: hidden;
+        transform: scale(0.9) !important;
+        transform-origin: top center !important;
+        position: relative !important;
+        left: 0 !important;
+        right: 0 !important;
+        margin: 0 auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+    
+    /* 确保所有内容不超过屏幕 */
+    body > * {
+        max-width: 100% !important;
     }
 }
 </style>
-
 
 </head>
 <body>

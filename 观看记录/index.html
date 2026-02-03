@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>最近在看</title>
+    <!-- 添加外部CSS链接 -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="record-management-container">
+        <!-- 页面标题 -->
+        <header class="page-header">
+            <h1>最近在看</h1>
+            <p class="page-subtitle">记录电影、电视剧、纪录片和书籍</p>
+        </header>
+        
+        <!-- 添加记录表单 -->
+        <section class="form-section">
+            <h2 class="section-title">添加新记录</h2>
+            <form id="record-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="title">标题 *</label>
+                        <input type="text" id="title" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="type">类型 *</label>
+                        <select id="type" class="form-control" required>
+                            <option value="">选择类型</option>
+                            <option value="movie">电影</option>
+                            <option value="tv">电视剧</option>
+                            <option value="documentary">纪录片</option>
+                            <option value="book">书籍</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="director">导演/作者</label>
+                        <input type="text" id="director" class="form-control" placeholder="可选">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="date">观看/阅读日期 *</label>
+                        <input type="date" id="date" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="rating">评分 (1-10)</label>
+                        <input type="number" id="rating" class="form-control" min="1" max="10" step="0.1" placeholder="可选">
+                    </div>
+                </div>
+                
+				<div class="form-group">
+					<label for="image-url">封面图片</label>
+					<!-- 改成 type="file" 和 accept="image/*" -->
+					<input type="file" id="image-url" accept="image/*" style="display: none;">
+					<!-- 添加一个按钮来触发文件选择 -->
+					<button type="button" class="btn btn-secondary" id="choose-image" style="margin-top: 10px;">选择本地图片</button>
+					<!-- 显示已选择文件名 -->
+					<div id="file-name" style="color: var(--color-text-tertiary); font-size: 0.9rem; margin-top: 5px;"></div>
+				</div>
+                
+                <div class="form-group">
+                    <label for="notes">影评/备注</label>
+                    <textarea id="notes" class="form-control" placeholder="写下您的影评或备注..."></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">添加记录</button>
+                    <button type="button" class="btn btn-secondary" id="reset-form">重置</button>
+                </div>
+            </form>
+        </section>
+        
+        <!-- 记录列表 -->
+        <section class="records-section">
+            <div class="filter-section">
+                <h2 class="section-title">我的记录</h2>
+                
+                <!-- 统计信息 -->
+                <div class="stats-grid" id="stats">
+                    <!-- 统计信息动态生成 -->
+                </div>
+                
+                <!-- 筛选标签 -->
+                <div class="filter-tabs" id="filter-buttons">
+                    <button class="filter-tab active" data-filter="all">全部</button>
+                    <button class="filter-tab" data-filter="movie">电影</button>
+                    <button class="filter-tab" data-filter="tv">电视剧</button>
+                    <button class="filter-tab" data-filter="documentary">纪录片</button>
+                    <button class="filter-tab" data-filter="book">书籍</button>
+                </div>
+            </div>
+            
+            <!-- 记录列表容器 -->
+            <div class="records-container" id="records-list">
+                <!-- 记录卡片动态生成 -->
+            </div>
+            
+            <!-- 空状态 -->
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <div class="empty-icon">📝</div>
+                <p>暂无记录，请添加您的第一条记录！</p>
+            </div>
+            
+            <!-- 导出功能 -->
+            <div class="export-controls">
+                <div class="export-actions">
+                    <button class="btn btn-secondary" id="import-json">导入JSON</button>
+                    <button class="btn btn-secondary" id="export-json">导出JSON数据</button>
+                    <button class="btn btn-secondary" id="export-html">导出HTML页面</button>
+                    <button class="btn btn-danger" id="clear-data">清除所有数据</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

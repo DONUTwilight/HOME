@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>导出的博客 - 2026/2/27</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Courier New', monospace; 
+            background: #fafafa; 
+            color: #333; 
+            line-height: 1.6; 
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header { 
+            text-align: center; 
+            margin-bottom: 30px; 
+            padding-bottom: 15px;
+            border-bottom: 2px solid #ddd;
+        }
+        .header h1 { 
+            font-size: 24px; 
+            color: #444; 
+            margin-bottom: 10px;
+        }
+        .header-info { 
+            font-size: 12px; 
+            color: #888; 
+        }
+        .search-box {
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .blog-post { 
+            background: white; 
+            border: 1px solid #ddd; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .post-header { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 15px; 
+            font-size: 12px; 
+            color: #666; 
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .post-content { 
+            margin-bottom: 15px; 
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .tags { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 5px; 
+            margin-top: 15px; 
+        }
+        .tag { 
+            background: #f0f0f0; 
+            color: #555; 
+            padding: 4px 10px; 
+            font-size: 11px; 
+            border-radius: 12px;
+            border: 1px solid #ddd;
+        }
+        img, video { 
+            max-width: 100%; 
+            max-height: 300px; 
+            margin: 10px 0; 
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .stats {
+            text-align: center;
+            margin: 10px 0;
+            color: #666;
+            font-size: 13px;
+        }
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .blog-post { padding: 15px; }
+            .post-header { flex-direction: column; gap: 5px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📝 博客存档</h1>
+        <div class="header-info">
+            导出时间：2026/2/27 09:12:50 | 
+            共 7 条博客
+        </div>
+    </div>
+    
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="搜索博客内容或标签...">
+        <div class="stats">
+            显示 <span id="resultCount">7</span> 条结果
+        </div>
+    </div>
+    
+    <div id="blogContainer">
+        
+                <div class="blog-post" data-id="1772154507594">
+                    <div class="post-header">
+                        <small>2026/2/27 09:08</small>
+                        <small>#7594</small>
+                    </div>
+                    <div class="post-content">完全没想到github会把中文路径名称屏蔽掉……把文件夹名字改了，至于内容就没办法了……反正更新时还是以“把存档上传”这种方式为主，而且从github下载的压缩包也是可以正确识别路径的
+顺带删了一点可能有些累赘的组件</div>
+                    
+                    
+                        <div class="tags">
+                            <span class="tag">更新日志</span>
+                        </div>
+                    
+                </div>
+                <div class="blog-post" data-id="1770098944073">
+                    <div class="post-header">
+                        <small>2026/2/3 14:09</small>
+                        <small>#4073</small>
+                    </div>
+                    <div class="post-content">个站正式公开，大体的框架都已经确定了，因为用的是比较笨的办法，所以更新维护起来比较麻烦，也许不一定能做到每天都更新一次。但我有隔段时间就归档的习惯，所以应该问题不大。</div>
+                    
+                    
+                        <div class="tags">
+                            <span class="tag">更新日志</span>
+                        </div>
+                    
+                </div>
+                <div class="blog-post" data-id="1769731609569">
+                    <div class="post-header">
+                        <small>2026/1/30 08:06</small>
+                        <small>#9569</small>
+                    </div>
+                    <div class="post-content">改了下主页排版，添加了新的归档目录</div>
+                    
+                    
+                        <div class="tags">
+                            <span class="tag">更新日志</span>
+                        </div>
+                    
+                </div>
+                <div class="blog-post" data-id="1767938095039">
+                    <div class="post-header">
+                        <small>2026/1/9 16:43</small>
+                        <small>#5039</small>
+                    </div>
+                    <div class="post-content">更新博客编辑器的部分细节。
+更新主页部分样式，增加部分博客展示页。
+（决定还是多注重文字本身！）</div>
+                    
+                    
+                        <div class="tags">
+                            <span class="tag">更新日志</span>
+                        </div>
+                    
+                </div>
+                <div class="blog-post" data-id="1767937564764">
+                    <div class="post-header">
+                        <small>2026/1/8 13:40</small>
+                        <small>#4764</small>
+                    </div>
+                    <div class="post-content">更新了合并博客数据的功能。有点心虚，因为自己并没有出什么力只是把要求告诉给ai而已哈哈。。。但管他呢我觉得能用就行！</div>
+                    
+                    
+                        <div class="tags">
+                            <span class="tag">更新日志</span>
+                        </div>
+                    
+                </div>
+                <div class="blog-post" data-id="1768963313511">
+                    <div class="post-header">
+                        <small>2026/1/21 10:41</small>
+                        <small>#3511</small>
+                    </div>
+                    <div class="post-content">增加一个录入长篇文章的编辑器，支持富文本编辑，功能不一定全但是应该可以满足我自己的需求……导出部分只做了单篇导出，并没有导入功能，所以要记得随时导出存档。</div>
+                    
+                    
+                        <div class="tags">
+                            <span class="tag">更新日志</span>
+                        </div>
+                    
+                </div>
+                <div class="blog-post" data-id="1769940866667">
+                    <div class="post-header">
+                        <small>2026/2/1 10:14</small>
+                        <small>#6667</small>
+                    </div>
+                    <div class="post-content">尝试修复移动端页面不居中、横向滚动的问题。
+添加recently板块，用来放更私人的、可公开的记录。</div>
+                    
+                    
+                        <div class="tags">
+                            <span class="tag">更新日志</span>
+                        </div>
+                    
+                </div>
+    </div>
+    
+    <div class="blog-post" style="text-align: center; color: #888; font-size: 12px;">
+        好想吃甜甜圈
+    </div>
+    
+    <script>
+        const posts = document.querySelectorAll('.blog-post');
+        const searchInput = document.getElementById('searchInput');
+        const resultCount = document.getElementById('resultCount');
+        
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            let visibleCount = 0;
+            
+            posts.forEach(post => {
+                const content = post.textContent.toLowerCase();
+                const tags = post.querySelectorAll('.tag');
+                const postTags = Array.from(tags).map(tag => tag.textContent.toLowerCase());
+                
+                const matchesSearch = !searchTerm || 
+                    content.includes(searchTerm) || 
+                    postTags.some(tag => tag.includes(searchTerm));
+                
+                if (matchesSearch) {
+                    post.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    post.style.display = 'none';
+                }
+            });
+            
+            resultCount.textContent = visibleCount;
+        });
+    </script>
+</body>
+</html>

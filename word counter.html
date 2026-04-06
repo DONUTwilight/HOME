@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>字数统计组件</title>
+    <style>
+        :root {
+            --color-surface: #121835;
+            --color-surface-secondary: #1A2240;
+            --color-border: #2A3258;
+            --color-text-primary: #E6F0FF;
+            --color-text-secondary: #C8D8FF;
+            --color-text-tertiary: #A5B8E9;
+            --color-primary: #4169E1;
+            --color-accent: #FF8C00;
+            --color-secondary: #4682B4;
+            --radius-sm: 8px;
+            --radius-lg: 16px;
+            --space-xs: 0.4rem;
+            --space-sm: 0.6rem;
+            --space-md: 0.8rem;
+            --space-lg: 1.2rem;
+            --transition-base: 300ms ease;
+        }
+
+        .stats-container {
+            font-family: 'Times New Roman', Times, serif;
+            background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface-secondary) 100%);
+            border-radius: var(--radius-lg);
+            padding: var(--space-md);
+            border: 1px solid var(--color-border);
+            box-shadow: 0 2px 8px rgba(30, 144, 255, 0.15), 0 1px 4px rgba(255, 140, 0, 0.1);
+            transition: all var(--transition-base);
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+            width: fit-content;
+            margin: 0 auto;
+        }
+
+        .stats-container:hover {
+            box-shadow: 0 6px 20px rgba(30, 144, 255, 0.2), 0 3px 10px rgba(255, 140, 0, 0.15);
+        }
+
+        .stat-item {
+            padding: 0 var(--space-md);
+            position: relative;
+            min-width: 140px;
+            text-align: center;
+        }
+
+        .stat-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1px;
+            height: 40px;
+            background: var(--color-border);
+        }
+
+        .stat-label {
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: var(--space-xs);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-xs);
+        }
+
+        .stat-icon {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: rgba(30, 144, 255, 0.2);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+
+        .stat-value {
+            color: var(--color-text-primary);
+            font-size: 1.3rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .stat-unit {
+            color: var(--color-text-tertiary);
+            font-size: 0.85rem;
+            margin-left: 2px;
+            font-weight: 400;
+        }
+
+        /* 移动端竖排布局 */
+        @media (max-width: 768px) {
+            .stats-container {
+                flex-direction: column;
+                gap: var(--space-md);
+                padding: var(--space-lg);
+                width: auto;
+                max-width: 300px;
+            }
+
+            .stat-item {
+                padding: var(--space-sm) 0;
+                min-width: auto;
+                width: 100%;
+            }
+
+            .stat-item:not(:last-child)::after {
+                content: '';
+                position: absolute;
+                right: 50%;
+                bottom: 0;
+                top: auto;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 60px;
+                height: 1px;
+                background: var(--color-border);
+            }
+
+            .stat-item:last-child::after {
+                display: none;
+            }
+
+            .stat-value {
+                font-size: 1.2rem;
+            }
+        }
+
+        /* 极窄屏幕适配 */
+        @media (max-width: 380px) {
+            .stats-container {
+                padding: var(--space-md);
+            }
+            
+            .stat-label {
+                font-size: 0.85rem;
+            }
+            
+            .stat-value {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stats-container">
+        <div class="stat-item">
+            <div class="stat-label">
+                <span class="stat-icon">总</span>
+                总字符数
+            </div>
+            <div class="stat-value">389,541<span class="stat-unit">字符</span></div>
+        </div>
+        
+        <div class="stat-item">
+            <div class="stat-label">
+                <span class="stat-icon">中</span>
+                中文字数
+            </div>
+            <div class="stat-value">355,485<span class="stat-unit">字</span></div>
+        </div>
+        
+        <div class="stat-item">
+            <div class="stat-label">
+                <span class="stat-icon">英</span>
+                英文单词
+            </div>
+            <div class="stat-value">3,442<span class="stat-unit">个</span></div>
+        </div>
+        
+        <div class="stat-item">
+            <div class="stat-label">
+                <span class="stat-icon">📄</span>
+                处理文件
+            </div>
+            <div class="stat-value">37<span class="stat-unit">个</span></div>
+        </div>
+    </div>
+
+    <script>
+        // 极简交互
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.querySelector('.stats-container');
+            
+            container.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+            
+            container.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>

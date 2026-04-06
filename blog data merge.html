@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>博客数据合并工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .main-content {
+            padding: 30px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            border: 1px solid #eaeaea;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            color: #4a5568;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: #667eea;
+        }
+        
+        .drop-zone {
+            border: 3px dashed #cbd5e0;
+            border-radius: 10px;
+            padding: 40px 20px;
+            text-align: center;
+            background: #f7fafc;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: #667eea;
+            background: #edf2f7;
+        }
+        
+        .drop-zone i {
+            font-size: 48px;
+            color: #a0aec0;
+            margin-bottom: 15px;
+        }
+        
+        .drop-zone h3 {
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+        
+        .drop-zone p {
+            color: #718096;
+            font-size: 14px;
+        }
+        
+        .file-list {
+            margin-top: 20px;
+        }
+        
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+            transition: transform 0.2s;
+        }
+        
+        .file-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .file-icon {
+            color: #48bb78;
+            font-size: 20px;
+        }
+        
+        .file-name {
+            font-weight: 500;
+            color: #2d3748;
+        }
+        
+        .file-size {
+            color: #718096;
+            font-size: 13px;
+        }
+        
+        .file-count {
+            background: #e6fffa;
+            color: #234e52;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .remove-btn {
+            background: #fed7d7;
+            color: #c53030;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+        
+        .remove-btn:hover {
+            background: #feb2b2;
+        }
+        
+        .merge-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .option-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .option-card:hover {
+            border-color: #667eea;
+            transform: translateY(-3px);
+        }
+        
+        .option-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #f6f8ff 0%, #edf2ff 100%);
+        }
+        
+        .option-card h4 {
+            color: #4a5568;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .option-card p {
+            color: #718096;
+            font-size: 14px;
+        }
+        
+        .stats {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 30px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #718096;
+            font-size: 14px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+        
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 180px;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+        
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+        }
+        
+        .preview {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #1a202c;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            margin-top: 20px;
+        }
+        
+        .preview-title {
+            color: #cbd5e0;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .message.success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+        
+        .message.error {
+            background: linear-gradient(135deg, #f56565 0%, #c53030 100%);
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .header, .main-content {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .merge-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-code-merge"></i> 博客数据合并工具</h1>
+            <p>合并不同设备上的博客存档JSON文件</p>
+        </div>
+        
+        <div class="main-content">
+            <!-- 文件上传区域 -->
+            <div class="section">
+                <div class="section-title">
+                    <i class="fas fa-upload"></i> 步骤1：上传JSON文件
+                </div>
+                
+                <div class="drop-zone" id="dropZone">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>拖放JSON文件到这里</h3>
+                    <p>或者点击选择文件（可多选）</p>
+                    <p style="font-size: 12px; margin-top: 10px; color: #a0aec0;">
+                        支持从博客系统导出的 .json 文件
+                    </p>
+                </div>
+                
+                <input type="file" id="fileInput" accept=".json" multiple style="display: none;">
+                
+                <div class="file-list" id="fileList">
+                    <!-- 文件列表将在这里动态生成 -->
+                </div>
+            </div>
+            
+            <!-- 合并选项 -->
+            <div class="section">
+                <div class="section-title">
+                    <i class="fas fa-sliders-h"></i> 步骤2：选择合并选项
+                </div>
+                
+                <div class="merge-options">
+                    <div class="option-card selected" data-option="merge">
+                        <h4><i class="fas fa-code-merge"></i> 智能合并</h4>
+                        <p>自动去重，保留最新版本，合并所有标签</p>
+                    </div>
+                    <div class="option-card" data-option="append">
+                        <h4><i class="fas fa-plus-circle"></i> 简单追加</h4>
+                        <p>直接追加所有内容，不去重</p>
+                    </div>
+                    <div class="option-card" data-option="replace">
+                        <h4><i class="fas fa-exchange-alt"></i> 替换合并</h4>
+                        <p>用新文件完全替换旧文件内容</p>
+                    </div>
+                </div>
+                
+                <div class="stats" id="statsSection" style="display: none;">
+                    <h4><i class="fas fa-chart-bar"></i> 合并统计</h4>
+                    <div class="stats-grid" id="statsGrid">
+                        <!-- 统计信息将在这里动态生成 -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 预览和操作 -->
+            <div class="section">
+                <div class="section-title">
+                    <i class="fas fa-eye"></i> 步骤3：预览与下载
+                </div>
+                
+                <div id="previewSection" style="display: none;">
+                    <div class="preview-title">
+                        <i class="fas fa-file-code"></i> 合并结果预览（前500个字符）
+                    </div>
+                    <div class="preview" id="jsonPreview"></div>
+                </div>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>正在处理数据，请稍候...</p>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" id="resetBtn">
+                        <i class="fas fa-redo"></i> 重置
+                    </button>
+                    <button class="btn btn-primary" id="mergeBtn" disabled>
+                        <i class="fas fa-code-merge"></i> 开始合并
+                    </button>
+                    <button class="btn btn-success" id="downloadBtn" style="display: none;">
+                        <i class="fas fa-download"></i> 下载合并结果
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        class JSONMerger {
+            constructor() {
+                this.files = [];
+                this.mergedData = null;
+                this.mergeOption = 'merge'; // merge, append, replace
+                this.init();
+            }
+            
+            init() {
+                this.setupEventListeners();
+                this.renderFileList();
+            }
+            
+            setupEventListeners() {
+                // 文件上传
+                const dropZone = document.getElementById('dropZone');
+                const fileInput = document.getElementById('fileInput');
+                
+                dropZone.addEventListener('click', () => fileInput.click());
+                dropZone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.add('dragover');
+                });
+                dropZone.addEventListener('dragleave', () => {
+                    dropZone.classList.remove('dragover');
+                });
+                dropZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    dropZone.classList.remove('dragover');
+                    this.handleFiles(e.dataTransfer.files);
+                });
+                
+                fileInput.addEventListener('change', (e) => {
+                    this.handleFiles(e.target.files);
+                    fileInput.value = ''; // 重置input
+                });
+                
+                // 合并选项
+                document.querySelectorAll('.option-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        document.querySelectorAll('.option-card').forEach(c => 
+                            c.classList.remove('selected')
+                        );
+                        card.classList.add('selected');
+                        this.mergeOption = card.dataset.option;
+                        this.updateStats();
+                    });
+                });
+                
+                // 按钮事件
+                document.getElementById('resetBtn').addEventListener('click', () => this.reset());
+                document.getElementById('mergeBtn').addEventListener('click', () => this.mergeFiles());
+                document.getElementById('downloadBtn').addEventListener('click', () => this.downloadResult());
+            }
+            
+            handleFiles(fileList) {
+                for (let file of fileList) {
+                    if (file.type === 'application/json' || file.name.endsWith('.json')) {
+                        this.addFile(file);
+                    } else {
+                        this.showMessage(`文件 "${file.name}" 不是JSON格式`, 'error');
+                    }
+                }
+                this.renderFileList();
+            }
+            
+            addFile(file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const content = e.target.result;
+                        const data = JSON.parse(content);
+                        
+                        // 验证数据格式
+                        if (!this.validateJSON(data)) {
+                            this.showMessage(`文件 "${file.name}" 格式不正确`, 'error');
+                            return;
+                        }
+                        
+                        // 添加到文件列表
+                        this.files.push({
+                            name: file.name,
+                            size: file.size,
+                            data: data,
+                            id: Date.now() + Math.random()
+                        });
+                        
+                        this.renderFileList();
+                        this.updateMergeButton();
+                        this.showMessage(`成功添加文件: ${file.name}`, 'success');
+                    } catch (error) {
+                        this.showMessage(`解析文件 "${file.name}" 失败`, 'error');
+                        console.error(error);
+                    }
+                };
+                reader.readAsText(file);
+            }
+            
+            validateJSON(data) {
+                // 验证是否为博客数据格式
+                if (Array.isArray(data)) {
+                    // 旧格式：直接是博客数组
+                    return data.every(item => item.id && item.content !== undefined);
+                } else if (data.blogs && Array.isArray(data.blogs)) {
+                    // 新格式：包含blogs字段
+                    return data.blogs.every(item => item.id && item.content !== undefined);
+                }
+                return false;
+            }
+            
+            removeFile(fileId) {
+                this.files = this.files.filter(file => file.id !== fileId);
+                this.renderFileList();
+                this.updateMergeButton();
+            }
+            
+            renderFileList() {
+                const container = document.getElementById('fileList');
+                
+                if (this.files.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; color: #a0aec0; padding: 30px;">
+                            <i class="fas fa-file-import" style="font-size: 40px; margin-bottom: 15px;"></i>
+                            <p>还没有添加任何文件</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = this.files.map(file => {
+                    const blogCount = this.getBlogCount(file.data);
+                    const fileSize = this.formatFileSize(file.size);
+                    
+                    return `
+                        <div class="file-item">
+                            <div class="file-info">
+                                <i class="fas fa-file-alt file-icon"></i>
+                                <div>
+                                    <div class="file-name">${file.name}</div>
+                                    <div class="file-size">${fileSize} · ${blogCount} 条博客</div>
+                                </div>
+                            </div>
+                            <div class="file-count">
+                                ${blogCount} 条
+                            </div>
+                            <button class="remove-btn" onclick="merger.removeFile(${file.id})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            getBlogCount(data) {
+                if (Array.isArray(data)) {
+                    return data.length;
+                } else if (data.blogs) {
+                    return data.blogs.length;
+                }
+                return 0;
+            }
+            
+            formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+            
+            updateMergeButton() {
+                const mergeBtn = document.getElementById('mergeBtn');
+                mergeBtn.disabled = this.files.length < 2;
+            }
+            
+            async mergeFiles() {
+                if (this.files.length < 2) {
+                    this.showMessage('请至少添加2个文件进行合并', 'error');
+                    return;
+                }
+                
+                this.showLoading(true);
+                
+                try {
+                    // 根据选项合并数据
+                    switch(this.mergeOption) {
+                        case 'merge':
+                            this.mergedData = await this.smartMerge();
+                            break;
+                        case 'append':
+                            this.mergedData = await this.simpleAppend();
+                            break;
+                        case 'replace':
+                            this.mergedData = await this.replaceMerge();
+                            break;
+                    }
+                    
+                    this.showLoading(false);
+                    this.updateStats();
+                    this.showPreview();
+                    this.showMessage('数据合并成功！', 'success');
+                    
+                    // 显示下载按钮
+                    document.getElementById('downloadBtn').style.display = 'flex';
+                    
+                } catch (error) {
+                    this.showLoading(false);
+                    this.showMessage('合并失败: ' + error.message, 'error');
+                    console.error(error);
+                }
+            }
+            
+            async smartMerge() {
+                // 智能合并：去重，保留最新版本
+                const allBlogs = [];
+                const allTags = new Set();
+                const blogMap = new Map(); // 用于去重，key: blog id, value: blog
+            
+                // 收集所有数据
+                for (const file of this.files) {
+                    const data = file.data;
+                    
+                    let blogs, tags;
+                    if (Array.isArray(data)) {
+                        blogs = data;
+                        tags = [];
+                    } else {
+                        blogs = data.blogs || [];
+                        tags = data.tags || [];
+                    }
+                    
+                    // 收集标签
+                    tags.forEach(tag => allTags.add(tag));
+                    
+                    // 处理博客（去重并保留最新版本）
+                    blogs.forEach(blog => {
+                        const existingBlog = blogMap.get(blog.id);
+                        
+                        if (!existingBlog) {
+                            blogMap.set(blog.id, blog);
+                        } else {
+                            // 如果已存在，保留更新时间更晚的版本
+                            const existingTime = new Date(existingBlog.updated || existingBlog.created);
+                            const newTime = new Date(blog.updated || blog.created);
+                            
+                            if (newTime > existingTime) {
+                                blogMap.set(blog.id, blog);
+                            }
+                        }
+                    });
+                }
+                
+                // 转换为数组并排序（按时间倒序）
+                const mergedBlogs = Array.from(blogMap.values()).sort((a, b) => {
+                    const timeA = new Date(a.updated || a.created || a.datetime);
+                    const timeB = new Date(b.updated || b.created || b.datetime);
+                    return timeB - timeA;
+                });
+                
+                // 收集所有博客中的标签
+                mergedBlogs.forEach(blog => {
+                    if (blog.tags && Array.isArray(blog.tags)) {
+                        blog.tags.forEach(tag => allTags.add(tag));
+                    }
+                });
+                
+                return {
+                    blogs: mergedBlogs,
+                    tags: Array.from(allTags),
+                    version: '3.0',
+                    mergedFrom: this.files.map(f => f.name),
+                    mergeDate: new Date().toISOString(),
+                    totalBlogs: mergedBlogs.length,
+                    totalTags: allTags.size
+                };
+            }
+            
+            async simpleAppend() {
+                // 简单追加：不去重
+                const allBlogs = [];
+                const allTags = new Set();
+                
+                for (const file of this.files) {
+                    const data = file.data;
+                    
+                    if (Array.isArray(data)) {
+                        allBlogs.push(...data);
+                    } else {
+                        allBlogs.push(...(data.blogs || []));
+                        (data.tags || []).forEach(tag => allTags.add(tag));
+                    }
+                }
+                
+                // 收集所有博客中的标签
+                allBlogs.forEach(blog => {
+                    if (blog.tags && Array.isArray(blog.tags)) {
+                        blog.tags.forEach(tag => allTags.add(tag));
+                    }
+                });
+                
+                return {
+                    blogs: allBlogs,
+                    tags: Array.from(allTags),
+                    version: '3.0',
+                    mergedFrom: this.files.map(f => f.name),
+                    mergeDate: new Date().toISOString(),
+                    totalBlogs: allBlogs.length,
+                    totalTags: allTags.size
+                };
+            }
+            
+            async replaceMerge() {
+                // 用最后一个文件替换
+                const lastFile = this.files[this.files.length - 1];
+                const data = lastFile.data;
+                
+                if (Array.isArray(data)) {
+                    return {
+                        blogs: data,
+                        tags: this.extractAllTags(data),
+                        version: '3.0',
+                        mergedFrom: [lastFile.name],
+                        mergeDate: new Date().toISOString(),
+                        totalBlogs: data.length,
+                        totalTags: this.extractAllTags(data).length
+                    };
+                } else {
+                    return {
+                        ...data,
+                        version: '3.0',
+                        mergedFrom: [lastFile.name],
+                        mergeDate: new Date().toISOString(),
+                        totalBlogs: (data.blogs || []).length,
+                        totalTags: (data.tags || []).length
+                    };
+                }
+            }
+            
+            extractAllTags(blogs) {
+                const tags = new Set();
+                blogs.forEach(blog => {
+                    if (blog.tags && Array.isArray(blog.tags)) {
+                        blog.tags.forEach(tag => tags.add(tag));
+                    }
+                });
+                return Array.from(tags);
+            }
+            
+            updateStats() {
+                const statsSection = document.getElementById('statsSection');
+                const statsGrid = document.getElementById('statsGrid');
+                
+                if (!this.mergedData) {
+                    statsSection.style.display = 'none';
+                    return;
+                }
+                
+                statsSection.style.display = 'block';
+                
+                statsGrid.innerHTML = `
+                    <div class="stat-item">
+                        <div class="stat-value">${this.mergedData.totalBlogs || this.mergedData.blogs.length}</div>
+                        <div class="stat-label">合并后博客数量</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${this.mergedData.totalTags || this.mergedData.tags.length}</div>
+                        <div class="stat-label">合并后标签数量</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${this.files.length}</div>
+                        <div class="stat-label">合并的文件数</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">${this.mergeOption === 'merge' ? '智能' : this.mergeOption === 'append' ? '追加' : '替换'}</div>
+                        <div class="stat-label">合并模式</div>
+                    </div>
+                `;
+            }
+            
+            showPreview() {
+                const previewSection = document.getElementById('previewSection');
+                const preview = document.getElementById('jsonPreview');
+                
+                if (!this.mergedData) {
+                    previewSection.style.display = 'none';
+                    return;
+                }
+                
+                previewSection.style.display = 'block';
+                
+                // 只显示前500个字符的预览
+                const previewText = JSON.stringify(this.mergedData, null, 2);
+                preview.textContent = previewText.substring(0, 500) + 
+                    (previewText.length > 500 ? '...' : '');
+            }
+            
+            downloadResult() {
+                if (!this.mergedData) {
+                    this.showMessage('没有可下载的数据', 'error');
+                    return;
+                }
+                
+                const jsonString = JSON.stringify(this.mergedData, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                
+                const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+                a.href = url;
+                a.download = `merged_blogs_${dateStr}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                this.showMessage('文件下载开始', 'success');
+            }
+            
+            showLoading(show) {
+                document.getElementById('loading').style.display = show ? 'block' : 'none';
+                document.getElementById('mergeBtn').disabled = show;
+            }
+            
+            showMessage(text, type = 'success') {
+                // 移除现有消息
+                const existingMsg = document.querySelector('.message');
+                if (existingMsg) existingMsg.remove();
+                
+                // 创建新消息
+                const message = document.createElement('div');
+                message.className = `message ${type}`;
+                message.innerHTML = `
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                    ${text}
+                `;
+                
+                document.body.appendChild(message);
+                
+                // 3秒后自动消失
+                setTimeout(() => {
+                    if (message.parentNode) {
+                        message.style.opacity = '0';
+                        setTimeout(() => {
+                            if (message.parentNode) message.remove();
+                        }, 300);
+                    }
+                }, 3000);
+            }
+            
+            reset() {
+                this.files = [];
+                this.mergedData = null;
+                this.mergeOption = 'merge';
+                
+                // 重置UI
+                this.renderFileList();
+                this.updateMergeButton();
+                document.getElementById('statsSection').style.display = 'none';
+                document.getElementById('previewSection').style.display = 'none';
+                document.getElementById('downloadBtn').style.display = 'none';
+                
+                // 重置选项卡片
+                document.querySelectorAll('.option-card').forEach((card, index) => {
+                    card.classList.remove('selected');
+                    if (index === 0) card.classList.add('selected');
+                });
+                
+                this.showMessage('已重置所有数据', 'success');
+            }
+        }
+        
+        // 初始化应用
+        document.addEventListener('DOMContentLoaded', () => {
+            window.merger = new JSONMerger();
+        });
+    </script>
+</body>
+</html>

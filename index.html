@@ -35,11 +35,15 @@
     }
 }
 </style>
-
 </head>
+
+
 <body>
     <nav class="navbar">
-        <div class="site-title">HOME</div>
+    <div class="site-title" style="display: flex; align-items: center; gap: 12px;">
+        <span>HOME</span>
+        <span style="font-size: 15px; font-weight: normal; opacity: 0.7;">若其理应为你所掌握，则必将在未来与你相逢。</span>
+    </div>
         <div class="nav-links">
             <a href="#Recently">Recently</a>
             <a href="#Contact">Contact</a>
@@ -53,6 +57,7 @@
         <img src="images/index/DONUT.jpg" alt="头像" class="avatar">
 
         <h1>DONUTwilight</h1>
+		<p style="text-align: center;"><span id="blogAge" style="font-weight: bold; font-style: italic"></span></p>
         <p style="text-align: center;">我也叫暮流年，随意称呼</p>
         <p style="text-align: center;">20↑ 中文/ENG/ESP 目前主要在ff14/bleach/mirm/oc</p>
         <p style="text-align: center;">技术力不高，我写我想写的，你看你想看的</p>
@@ -322,5 +327,39 @@
             <p>2026 DONUTwilight | Personal Page </p>
         </div>
 </div>
+
+
+<script>
+(function() {
+    // ★★★ 唯一需要你手动改的地方：开博日期（年, 月-1, 日） ★★★
+    const START = new Date(2026, 1, 5);  // 例如 2024年1月1日
+
+    // 格式化：把总天数转成 "X年X个月X天"
+    function formatDuration(totalDays) {
+        if (totalDays < 0) return '还未开博';
+        const years = Math.floor(totalDays / 365);
+        const months = Math.floor((totalDays % 365) / 30);
+        const days = (totalDays % 365) % 30;
+        let result = '';
+        if (years) result += years + '年';
+        if (months) result += months + '个月';
+        if (days || !result) result += days + '天';
+        return result || '0天';
+    }
+
+    function updateAge() {
+        const now = new Date();
+        const diff = now - START;          // 毫秒差
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        document.getElementById('blogAge').textContent = 
+           formatDuration(days) + '后的你好吗？ ';
+    }
+
+    updateAge();                // 立即显示
+    setInterval(updateAge, 60000); // 每分钟刷新一次（跨天自动变）
+})();
+</script>
+
+
 </body>
 </html>
